@@ -25,6 +25,9 @@ keep in mind the requirements.txt will be continuously updated with every commit
 ### Overview
 
 To collect the necessary candlestick data, utilize the `get_candlestick_data` function from `Data_for_bp.py`.
+    ```bash
+    from Data_for_bp import get_candlestick_data
+    ```
 
 ### Parameters
 
