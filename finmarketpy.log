@@ -1,0 +1,216 @@
+2023-09-08 09:27:42,247 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-08 09:27:42,247 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-08 09:27:42,362 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-01 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/01/00h_ticks.bi5
+2023-09-08 09:27:47,334 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-02 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/02/00h_ticks.bi5
+2023-09-08 09:27:52,474 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-03 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/03/00h_ticks.bi5
+2023-09-08 09:27:57,606 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-04 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/04/00h_ticks.bi5
+2023-09-08 09:28:02,597 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-05 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/05/00h_ticks.bi5
+2023-09-08 09:28:07,521 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-06 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/06/00h_ticks.bi5
+2023-09-08 09:28:12,787 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-07 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/07/00h_ticks.bi5
+2023-09-08 09:28:17,898 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-08 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/08/00h_ticks.bi5
+2023-09-08 09:28:23,195 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-09 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/09/00h_ticks.bi5
+2023-09-08 09:28:27,997 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-10 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/10/00h_ticks.bi5
+2023-09-08 09:28:33,289 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-11 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/11/00h_ticks.bi5
+2023-09-08 09:28:38,347 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-12 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/12/00h_ticks.bi5
+2023-09-08 09:28:43,528 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-13 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/13/00h_ticks.bi5
+2023-09-08 09:28:48,659 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-14 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/14/00h_ticks.bi5
+2023-09-08 09:28:53,823 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-15 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/15/00h_ticks.bi5
+2023-09-08 09:28:58,633 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-16 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/16/00h_ticks.bi5
+2023-09-08 09:29:03,557 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-17 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/17/00h_ticks.bi5
+2023-09-08 09:29:08,841 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-18 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/18/00h_ticks.bi5
+2023-09-08 09:29:14,028 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-19 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/19/00h_ticks.bi5
+2023-09-08 09:29:19,162 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-20 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/20/00h_ticks.bi5
+2023-09-08 09:29:24,404 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-21 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/21/00h_ticks.bi5
+2023-09-08 09:29:29,564 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-22 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/22/00h_ticks.bi5
+2023-09-08 09:29:34,510 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-23 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/23/00h_ticks.bi5
+2023-09-08 09:29:39,424 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-24 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/24/00h_ticks.bi5
+2023-09-08 09:29:44,930 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-25 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/25/00h_ticks.bi5
+2023-09-08 09:29:50,095 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-26 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/26/00h_ticks.bi5
+2023-09-08 09:29:55,418 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-27 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/27/00h_ticks.bi5
+2023-09-08 09:30:00,415 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-28 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/28/00h_ticks.bi5
+2023-09-08 09:30:05,713 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-29 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/29/00h_ticks.bi5
+2023-09-08 09:30:10,873 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-30 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/30/00h_ticks.bi5
+2023-09-08 09:30:15,495 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-31 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/31/00h_ticks.bi5
+2023-09-08 09:30:21,035 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-08 09:30:21,097 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-08 09:30:21,121 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-08 09:30:21,122 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-08 09:30:21,124 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-01 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/01/00h_ticks.bi5
+2023-09-08 09:30:26,120 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-02 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/02/00h_ticks.bi5
+2023-09-08 09:30:31,145 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-03 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/03/00h_ticks.bi5
+2023-09-08 09:30:36,571 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-04 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/04/00h_ticks.bi5
+2023-09-08 09:30:41,874 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-05 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/05/00h_ticks.bi5
+2023-09-08 09:30:47,234 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-08 09:30:47,244 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-08 09:30:47,669 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-08 09:30:47,670 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-08 09:30:47,677 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-01 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/01/00h_ticks.bi5
+2023-09-08 09:30:52,308 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-02 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/02/00h_ticks.bi5
+2023-09-08 09:30:57,344 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-03 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/03/00h_ticks.bi5
+2023-09-08 09:31:02,476 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-04 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/04/00h_ticks.bi5
+2023-09-08 09:31:07,643 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-05 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/05/00h_ticks.bi5
+2023-09-08 09:31:12,814 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-06 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/06/00h_ticks.bi5
+2023-09-08 09:31:18,071 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-07 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/07/00h_ticks.bi5
+2023-09-08 09:31:23,278 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-08 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/08/00h_ticks.bi5
+2023-09-08 09:31:28,055 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-09 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/09/00h_ticks.bi5
+2023-09-08 09:31:33,228 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-10 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/10/00h_ticks.bi5
+2023-09-08 09:31:38,292 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-11 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/11/00h_ticks.bi5
+2023-09-08 09:31:43,420 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-12 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/12/00h_ticks.bi5
+2023-09-08 09:31:48,659 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-13 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/13/00h_ticks.bi5
+2023-09-08 09:31:54,167 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-14 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/14/00h_ticks.bi5
+2023-09-08 09:31:59,413 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-15 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/15/00h_ticks.bi5
+2023-09-08 09:32:04,518 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-16 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/16/00h_ticks.bi5
+2023-09-08 09:32:09,708 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-17 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/17/00h_ticks.bi5
+2023-09-08 09:32:14,818 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-18 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/18/00h_ticks.bi5
+2023-09-08 09:32:20,131 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-19 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/19/00h_ticks.bi5
+2023-09-08 09:32:25,538 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-20 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/20/00h_ticks.bi5
+2023-09-08 09:32:30,588 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-21 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/21/00h_ticks.bi5
+2023-09-08 09:32:36,233 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-22 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/22/00h_ticks.bi5
+2023-09-08 09:32:40,965 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-23 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/23/00h_ticks.bi5
+2023-09-08 09:32:45,827 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-24 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/24/00h_ticks.bi5
+2023-09-08 09:32:50,796 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-25 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/25/00h_ticks.bi5
+2023-09-08 09:32:55,583 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-26 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/26/00h_ticks.bi5
+2023-09-08 09:33:00,751 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-27 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/27/00h_ticks.bi5
+2023-09-08 09:33:06,311 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-28 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/28/00h_ticks.bi5
+2023-09-08 09:33:11,318 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-29 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/29/00h_ticks.bi5
+2023-09-08 09:33:16,143 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-30 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/30/00h_ticks.bi5
+2023-09-08 09:33:21,193 - findatapy.market.datavendorweb - INFO - Downloading... 2022-01-31 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/00/31/00h_ticks.bi5
+2023-09-08 09:33:26,583 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-08 09:33:26,626 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-08 09:33:26,645 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-08 09:33:26,646 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-08 09:33:26,651 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-01 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/01/00h_ticks.bi5
+2023-09-08 09:33:31,512 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-02 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/02/00h_ticks.bi5
+2023-09-08 09:33:36,542 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-03 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/03/00h_ticks.bi5
+2023-09-08 09:33:42,175 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-04 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/04/00h_ticks.bi5
+2023-09-08 09:33:47,421 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-05 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/05/00h_ticks.bi5
+2023-09-08 09:33:52,364 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-06 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/06/00h_ticks.bi5
+2023-09-08 09:33:57,253 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-07 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/07/00h_ticks.bi5
+2023-09-08 09:34:02,500 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-08 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/08/00h_ticks.bi5
+2023-09-08 09:34:07,864 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-09 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/09/00h_ticks.bi5
+2023-09-08 09:34:12,931 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-10 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/10/00h_ticks.bi5
+2023-09-08 09:34:18,473 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-11 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/11/00h_ticks.bi5
+2023-09-08 09:34:23,319 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-12 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/12/00h_ticks.bi5
+2023-09-08 09:34:28,303 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-13 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/13/00h_ticks.bi5
+2023-09-08 09:34:33,154 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-14 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/14/00h_ticks.bi5
+2023-09-08 09:34:38,275 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-15 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/15/00h_ticks.bi5
+2023-09-08 09:34:43,782 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-16 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/16/00h_ticks.bi5
+2023-09-08 09:34:49,023 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-17 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/17/00h_ticks.bi5
+2023-09-08 09:34:54,721 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-18 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/18/00h_ticks.bi5
+2023-09-08 09:34:59,839 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-19 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/19/00h_ticks.bi5
+2023-09-08 09:35:04,709 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-20 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/20/00h_ticks.bi5
+2023-09-08 09:35:09,488 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-21 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/21/00h_ticks.bi5
+2023-09-08 09:35:14,601 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-22 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/22/00h_ticks.bi5
+2023-09-08 09:35:19,360 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-23 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/23/00h_ticks.bi5
+2023-09-08 09:35:24,488 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-24 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/24/00h_ticks.bi5
+2023-09-08 09:35:30,473 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-25 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/25/00h_ticks.bi5
+2023-09-08 09:35:35,710 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-26 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/26/00h_ticks.bi5
+2023-09-08 09:35:40,693 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-27 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/27/00h_ticks.bi5
+2023-09-08 09:35:45,674 - findatapy.market.datavendorweb - INFO - Downloading... 2022-02-28 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/01/28/00h_ticks.bi5
+2023-09-08 09:35:51,939 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-08 09:35:51,994 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-08 09:35:52,012 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-08 09:35:52,012 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-08 09:35:52,019 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-01 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/01/00h_ticks.bi5
+2023-09-08 09:35:57,089 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-02 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/02/00h_ticks.bi5
+2023-09-08 09:36:03,172 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-03 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/03/00h_ticks.bi5
+2023-09-08 09:36:08,140 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-04 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/04/00h_ticks.bi5
+2023-09-08 09:36:13,876 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-05 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/05/00h_ticks.bi5
+2023-09-08 09:36:18,682 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-06 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/06/00h_ticks.bi5
+2023-09-08 09:36:23,734 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-07 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/07/00h_ticks.bi5
+2023-09-08 09:36:29,636 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-08 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/08/00h_ticks.bi5
+2023-09-08 09:36:35,832 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-09 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/09/00h_ticks.bi5
+2023-09-08 09:36:41,504 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-10 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/10/00h_ticks.bi5
+2023-09-08 09:36:47,096 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-11 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/11/00h_ticks.bi5
+2023-09-08 09:36:52,891 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-12 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/12/00h_ticks.bi5
+2023-09-08 09:36:57,721 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-13 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/13/00h_ticks.bi5
+2023-09-08 09:37:02,722 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-14 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/14/00h_ticks.bi5
+2023-09-08 09:37:08,047 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-15 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/15/00h_ticks.bi5
+2023-09-08 09:37:13,343 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-16 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/16/00h_ticks.bi5
+2023-09-08 09:37:18,860 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-17 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/17/00h_ticks.bi5
+2023-09-08 09:37:24,469 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-18 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/18/00h_ticks.bi5
+2023-09-08 09:37:29,525 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-19 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/19/00h_ticks.bi5
+2023-09-08 09:37:34,228 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-20 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/20/00h_ticks.bi5
+2023-09-08 09:37:39,021 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-21 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/21/00h_ticks.bi5
+2023-09-08 09:37:45,019 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-22 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/22/00h_ticks.bi5
+2023-09-08 09:37:50,732 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-23 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/23/00h_ticks.bi5
+2023-09-08 09:37:55,835 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-24 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/24/00h_ticks.bi5
+2023-09-08 09:38:00,826 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-25 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/25/00h_ticks.bi5
+2023-09-08 09:38:06,201 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-26 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/26/00h_ticks.bi5
+2023-09-08 09:38:10,987 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-27 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/27/00h_ticks.bi5
+2023-09-08 09:38:16,029 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-28 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/28/00h_ticks.bi5
+2023-09-08 09:38:21,419 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-29 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/29/00h_ticks.bi5
+2023-09-08 09:38:26,712 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-30 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/30/00h_ticks.bi5
+2023-09-08 09:38:32,165 - findatapy.market.datavendorweb - INFO - Downloading... 2022-03-31 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/02/31/00h_ticks.bi5
+2023-09-08 09:38:37,732 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-08 09:38:37,781 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-08 09:38:37,799 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-08 09:38:37,800 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-08 09:38:37,806 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-01 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/01/00h_ticks.bi5
+2023-09-08 09:38:42,726 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-02 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/02/00h_ticks.bi5
+2023-09-08 09:38:47,659 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-03 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/03/00h_ticks.bi5
+2023-09-08 09:38:52,672 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-04 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/04/00h_ticks.bi5
+2023-09-08 09:38:57,676 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-05 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/05/00h_ticks.bi5
+2023-09-08 09:39:02,794 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-06 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/06/00h_ticks.bi5
+2023-09-08 09:39:08,984 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-07 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/07/00h_ticks.bi5
+2023-09-08 09:39:14,584 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-08 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/08/00h_ticks.bi5
+2023-09-08 09:39:19,381 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-09 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/09/00h_ticks.bi5
+2023-09-08 09:39:24,535 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-10 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/10/00h_ticks.bi5
+2023-09-08 09:39:29,413 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-11 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/11/00h_ticks.bi5
+2023-09-08 09:39:34,577 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-12 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/12/00h_ticks.bi5
+2023-09-08 09:39:39,828 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-13 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/13/00h_ticks.bi5
+2023-09-08 09:39:44,995 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-14 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/14/00h_ticks.bi5
+2023-09-08 09:39:50,888 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-15 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/15/00h_ticks.bi5
+2023-09-08 09:39:55,995 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-16 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/16/00h_ticks.bi5
+2023-09-08 09:40:00,891 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-17 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/17/00h_ticks.bi5
+2023-09-08 09:40:05,817 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-18 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/18/00h_ticks.bi5
+2023-09-08 09:40:10,764 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-19 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/19/00h_ticks.bi5
+2023-09-08 09:40:16,074 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-20 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/20/00h_ticks.bi5
+2023-09-08 09:40:20,985 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-21 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/21/00h_ticks.bi5
+2023-09-08 09:40:26,444 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-22 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/22/00h_ticks.bi5
+2023-09-08 09:40:31,532 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-23 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/23/00h_ticks.bi5
+2023-09-08 09:40:36,457 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-24 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/24/00h_ticks.bi5
+2023-09-08 09:40:42,164 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-25 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/25/00h_ticks.bi5
+2023-09-08 09:40:47,276 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-26 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/26/00h_ticks.bi5
+2023-09-08 09:40:52,576 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-27 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/27/00h_ticks.bi5
+2023-09-08 09:40:57,833 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-28 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/28/00h_ticks.bi5
+2023-09-08 09:41:03,785 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-29 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/29/00h_ticks.bi5
+2023-09-08 09:41:08,834 - findatapy.market.datavendorweb - INFO - Downloading... 2022-04-30 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/03/30/00h_ticks.bi5
+2023-09-08 09:41:14,157 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-08 09:41:14,217 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-08 09:41:14,236 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-08 09:41:14,236 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-08 09:41:14,302 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-01 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/01/00h_ticks.bi5
+2023-09-08 09:41:19,199 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-02 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/02/00h_ticks.bi5
+2023-09-08 09:41:24,252 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-03 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/03/00h_ticks.bi5
+2023-09-08 09:41:29,587 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-04 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/04/00h_ticks.bi5
+2023-09-08 09:41:34,889 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-05 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/05/00h_ticks.bi5
+2023-09-08 09:41:39,862 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-06 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/06/00h_ticks.bi5
+2023-09-08 09:41:45,862 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-07 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/07/00h_ticks.bi5
+2023-09-08 09:41:50,859 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-08 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/08/00h_ticks.bi5
+2023-09-08 09:41:55,833 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-09 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/09/00h_ticks.bi5
+2023-09-08 09:42:00,956 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-10 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/10/00h_ticks.bi5
+2023-09-08 09:42:06,104 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-11 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/11/00h_ticks.bi5
+2023-09-08 09:42:11,780 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-12 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/12/00h_ticks.bi5
+2023-09-08 09:42:17,341 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-13 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/13/00h_ticks.bi5
+2023-09-08 09:42:22,798 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-14 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/14/00h_ticks.bi5
+2023-09-08 09:42:27,402 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-15 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/15/00h_ticks.bi5
+2023-09-08 09:42:32,308 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-16 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/16/00h_ticks.bi5
+2023-09-08 09:42:37,628 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-17 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/17/00h_ticks.bi5
+2023-09-08 09:42:42,750 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-18 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/18/00h_ticks.bi5
+2023-09-08 09:42:47,762 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-19 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/19/00h_ticks.bi5
+2023-09-08 09:42:53,301 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-20 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/20/00h_ticks.bi5
+2023-09-08 09:42:58,437 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-21 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/21/00h_ticks.bi5
+2023-09-08 09:43:03,346 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-22 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/22/00h_ticks.bi5
+2023-09-08 09:43:08,262 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-23 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/23/00h_ticks.bi5
+2023-09-08 09:43:13,413 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-24 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/24/00h_ticks.bi5
+2023-09-08 09:43:18,677 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-25 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/25/00h_ticks.bi5
+2023-09-08 09:43:23,825 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-26 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/26/00h_ticks.bi5
+2023-09-08 09:43:28,928 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-27 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/27/00h_ticks.bi5
+2023-09-08 09:43:33,993 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-28 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/28/00h_ticks.bi5
+2023-09-08 09:43:38,882 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-29 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/29/00h_ticks.bi5
+2023-09-08 09:43:43,800 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-30 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/30/00h_ticks.bi5
+2023-09-08 09:43:50,590 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-31 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/31/00h_ticks.bi5
+2023-09-08 09:43:52,957 - findatapy.market.datavendorweb - WARNING - Didn't download on 1 attempt... 
+2023-09-08 09:43:57,972 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-01 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/01/00h_ticks.bi5
+2023-09-08 09:44:02,983 - findatapy.market.datavendorweb - INFO - Downloading... 2022-05-02 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2022/04/02/00h_ticks.bi5

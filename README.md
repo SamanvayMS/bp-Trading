@@ -19,28 +19,54 @@ keep in mind the requirements.txt will be continuously updated with every commit
     ```bash
     pip install -r requirements.txt
     ```
+## FX Data Utility: Tick Data and OHLC Transformation 
 
-## Data Gathering
+`import Data_for_bp as dfb`
 
-### Overview
+This module focuses on fetching tick-level foreign exchange (FX) data from Dukascopy and subsequently transforming this high-frequency data into OHLC (Open, High, Low, Close) formats. This format is widely used for traditional technical analysis and visual representation in quantitative trading.
 
-To collect the necessary candlestick data, utilize the `get_candlestick_data` function from `Data_for_bp.py`.
-    ```bash
-    from Data_for_bp import get_candlestick_data
-    ```
+### Functions Overview
 
-### Parameters
+- **`get_tick_data(start_date, finish_date) -> DataFrame`**: 
+  - Retrieves tick-level FX data for a specific time range.
+  - Computes a mid price for the FX instrument using bid and ask prices.
 
-- **`start_date`**: Start date for data collection in 'dd-mmm-yyyy' format.(like '14 Jun 2016')
-- **`end_date`**: End date for data collection in 'dd-mmm-yyyy' format.(like '17 Jun 2016')
+- **`tick_to_ohlc(tick_df: DataFrame, timeframe: str, pickle_file_name_ohlc=None) -> DataFrame`**: 
+  - Converts tick-level data to OHLC format for a designated timeframe.
+  - Provides the option to save the resulting data to a pickle file.
 
-- **`granularity`**: Time intervals for data collection. Options are:
+- **`get_candlestick_data(start_date, finish_date, timeframe: str) -> Tuple[DataFrame, DataFrame]`**: 
+  - A utility that fetches tick-level data and then converts it to OHLC for a specific timeframe.
 
-    - 1 minute: `1T`
-    - 1 hour: `1H`
-    - 1 day: `1D`
+- **`get_date_pairs(start_date_str, end_date_str, date_format) -> List[Tuple[str, str]]`**: 
+  - Divides a broader time interval into one-month segments. This prevents excessive API calls and potential system crashes.
 
-### Instructions
+- **`get_tick_data_optimised(start_date_str, end_date_str, pickle_file_name_ticks=None) -> DataFrame`**: 
+  - Optimized method that fetches tick-level data in monthly intervals and amalgamates them.
 
-1. Open the Jupyter notebook `Data_gathering.ipynb`.
-2. Follow the notebook to build and utilize `Data_for_bp.py`.
+- **`get_candlestick_data_optimised(start_date_str, end_date_str, timeframe, pickle_file_name_ticks=None, pickle_file_name_ohlc=None) -> Tuple[DataFrame, DataFrame]`**: 
+  - Optimized function to derive OHLC data from tick-level data in segments.
+
+- **`plot_data(ohlc_df, title='candlestick chart')`**: 
+  - Renders the OHLC data as a candlestick chart.
+
+### Dependencies
+
+- findatapy
+- pandas
+- datetime
+- dateutil
+- matplotlib
+- mplfinance
+
+**Usage**:
+After cloning this repository, import the module and invoke the appropriate function to fetch tick data or OHLC data for the FX instrument and time period of your choice. This utility is specifically optimized for procuring larger datasets without overburdening the API.
+
+## Data Analysis 
+
+Guide to the Notebook Data_analysis 
+
+**Usage**:
+After cloning this repository, Make sure to add necessary files containing daily timeframe candlestick data or import from file titled Data for practicum 2 on box and add it to the same location.
+
+
