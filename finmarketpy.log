@@ -404,3 +404,13 @@
 2023-09-10 10:30:35,022 - findatapy.market.datavendorweb - INFO - Downloading... 2023-08-21 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2023/07/21/00h_ticks.bi5
 2023-09-10 10:30:40,342 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
 2023-09-10 10:30:40,349 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-10 10:54:27,456 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-10 10:54:27,457 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-10 10:54:27,459 - findatapy.market.datavendorweb - INFO - Downloading... 2023-08-15 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2023/07/15/00h_ticks.bi5
+2023-09-10 10:54:32,830 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-10 10:54:32,836 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-10 10:55:49,274 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-10 10:55:49,275 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-10 10:55:49,276 - findatapy.market.datavendorweb - INFO - Downloading... 2023-08-15 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2023/07/15/00h_ticks.bi5
+2023-09-10 10:55:54,594 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-10 10:55:54,599 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
