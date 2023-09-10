@@ -374,3 +374,33 @@
 2023-09-09 16:00:49,707 - findatapy.market.datavendorweb - INFO - Downloading... 2023-08-21 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2023/07/21/00h_ticks.bi5
 2023-09-09 16:00:54,752 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
 2023-09-09 16:00:54,757 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-10 10:27:19,973 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-10 10:27:19,975 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-10 10:27:19,979 - findatapy.market.datavendorweb - INFO - Downloading... 2023-08-21 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2023/07/21/00h_ticks.bi5
+2023-09-10 10:27:25,021 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-10 10:27:25,027 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-10 10:27:35,112 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-10 10:27:35,112 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-10 10:27:35,114 - findatapy.market.datavendorweb - INFO - Downloading... 2023-08-21 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2023/07/21/00h_ticks.bi5
+2023-09-10 10:27:40,354 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-10 10:27:40,360 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-10 10:28:01,777 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-10 10:28:01,778 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-10 10:28:01,779 - findatapy.market.datavendorweb - INFO - Downloading... 2023-08-21 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2023/07/21/00h_ticks.bi5
+2023-09-10 10:28:06,883 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-10 10:28:06,889 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-10 10:29:00,600 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-10 10:29:00,601 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-10 10:29:00,603 - findatapy.market.datavendorweb - INFO - Downloading... 2023-08-21 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2023/07/21/00h_ticks.bi5
+2023-09-10 10:29:05,777 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-10 10:29:05,782 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-10 10:29:31,785 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-10 10:29:31,786 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-10 10:29:31,787 - findatapy.market.datavendorweb - INFO - Downloading... 2023-08-21 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2023/07/21/00h_ticks.bi5
+2023-09-10 10:29:37,107 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-10 10:29:37,112 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-10 10:30:35,019 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-10 10:30:35,019 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-10 10:30:35,022 - findatapy.market.datavendorweb - INFO - Downloading... 2023-08-21 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2023/07/21/00h_ticks.bi5
+2023-09-10 10:30:40,342 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-10 10:30:40,349 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
