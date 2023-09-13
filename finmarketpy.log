@@ -414,3 +414,13 @@
 2023-09-10 10:55:49,276 - findatapy.market.datavendorweb - INFO - Downloading... 2023-08-15 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2023/07/15/00h_ticks.bi5
 2023-09-10 10:55:54,594 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
 2023-09-10 10:55:54,599 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2023-09-12 22:29:26,918 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-12 22:29:26,918 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-12 22:29:26,949 - findatapy.market.datavendorweb - INFO - Downloading... 2023-08-15 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2023/07/15/00h_ticks.bi5
+2023-09-12 22:29:32,545 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-12 22:29:34,622 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 10061 connecting to 127.0.0.1:6379. No connection could be made because the target machine actively refused it.
+2023-09-12 22:31:26,643 - findatapy.market.datavendorweb - INFO - Request Dukascopy data
+2023-09-12 22:31:26,644 - findatapy.market.datavendorweb - INFO - About to download from Dukascopy... for EURUSD
+2023-09-12 22:31:26,648 - findatapy.market.datavendorweb - INFO - Downloading... 2023-08-15 00:00:00 https://www.dukascopy.com/datafeed/EURUSD/2023/07/15/00h_ticks.bi5
+2023-09-12 22:31:31,991 - findatapy.market.datavendorweb - INFO - Completed request from Dukascopy
+2023-09-12 22:31:34,038 - findatapy.market.ioengine - WARNING - Couldn't push MarketDataRequest_858__abstract_curve_key-None__base_depos_currencies-EUR_GBP_AUD_NZD_USD_CAD_CHF_NOK_SEK_JPY__base_depos_tenor-ON_TN_SN_1W_2W_3W_1M_... to Redis: Error 10061 connecting to 127.0.0.1:6379. No connection could be made because the target machine actively refused it.
