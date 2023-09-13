@@ -104,3 +104,137 @@ def plot_data(ohlc_df,title='canlestick chart'):
     # Create a candlestick chart using mplfinance
     mpf.plot(ohlc_df, type='candle', title=title,tight_layout=True, ylabel='Price', figratio=(15, 10),figsize=(15,7))
     plt.show()
+    
+def ladderize_open(tick_data, grid_size):
+    """
+    Convert tick data into step-based data using a specified grid size.
+
+    :param tick_data: A pandas Series of tick data.
+    :param grid_size: The size of the grid to discretize the tick data.
+    :return: A pandas Series of ladderized data.
+    """
+    ladderized_data = [tick_data.iloc[0]]
+    for i in range(1, len(tick_data)):
+        if tick_data.iloc[i] > ladderized_data[-1] + grid_size:
+            ladderized_data.append(ladderized_data[-1] + grid_size)
+        elif tick_data.iloc[i] < ladderized_data[-1] - grid_size:
+            ladderized_data.append(ladderized_data[-1] - grid_size)
+        else:
+            ladderized_data.append(ladderized_data[-1])
+    # Adding the final close price
+    ladderized_data[-1]=tick_data.iloc[-1]
+    return pd.Series(ladderized_data, index=tick_data.index)
+
+def ladderize_absolute(tick_data, grid_size):
+    """
+    Convert tick data into step-based data using a specified grid size.
+
+    :param tick_data: A pandas Series of tick data.
+    :param grid_size: The size of the grid to discretize the tick data.
+    :return: A pandas Series of ladderized data.
+    """
+    # Initialize ladder at the nearest rounded price level based on grid size
+    ladderized_data = [(tick_data.iloc[0] / grid_size).round() * grid_size]
+    for i in range(1, len(tick_data)):
+        if tick_data.iloc[i] > ladderized_data[-1] + grid_size:
+            ladderized_data.append(ladderized_data[-1] + grid_size)
+        elif tick_data.iloc[i] < ladderized_data[-1] - grid_size:
+            ladderized_data.append(ladderized_data[-1] - grid_size)
+        else:
+            ladderized_data.append(ladderized_data[-1])
+    # Adding the final close price
+    ladderized_data[-1]=tick_data.iloc[-1]
+    return pd.Series(ladderized_data, index=tick_data.index)
+
+def plot_colored_ladder(ladderized_data):
+    for i in range(1, len(ladderized_data)):
+        if ladderized_data[i] > ladderized_data[i-1]:
+            plt.plot(ladderized_data.index[i-1:i+1], ladderized_data.iloc[i-1:i+1], color='red')
+        elif ladderized_data[i] < ladderized_data[i-1]:
+            plt.plot(ladderized_data.index[i-1:i+1], ladderized_data.iloc[i-1:i+1], color='green')
+        else:
+            plt.plot(ladderized_data.index[i-1:i+1], ladderized_data.iloc[i-1:i+1], color='blue')  # Neutral color for no change
+            
+def plot_ladderized(start_date, end_date, grid_size=0.0005, ladderize_function=ladderize_open):
+    # Load the tick data
+    tick_data = get_tick_data(start_date,end_date)['EURUSD.mid']
+
+    ladderized_data = ladderize_function(tick_data, grid_size)
+
+    # Plot the results
+    plt.figure(figsize=(15,6))
+    plt.plot(tick_data, label='Tick Data',alpha=0.5)
+    plot_colored_ladder(ladderized_data)
+    # plt.plot(ladderized_data, label='Ladderized Data', linestyle='--')
+    plt.title('Ladder Strategy Visualization for date range: {} to {}'.format(start_date, end_date))
+    plt.legend()
+    plt.show()
+    
+def filter_jumps(ladderized_data):
+    """
+    Filters ladderized data to keep only the changes in price.
+
+    :param ladderized_data: A pandas Series of ladderized data.
+    :return: A pandas Series containing only the data points where there's a change.
+    """
+    # Calculate the difference between consecutive ladderized data points
+    diff = ladderized_data.diff()
+
+    # Filter where the difference is non-zero and include the first data point
+    jumps = ladderized_data[diff != 0.0]
+    jumps = pd.concat([ladderized_data.iloc[:1], jumps])
+
+    return jumps
+
+def aggregate_differences(jumps,lot_size=1):
+    """
+    Aggregate the position for buy/sell signals.
+
+    :param jumps: A pandas Series of ladderized data filtered for jumps.
+    :return: A pandas Series representing the aggregated position.
+    """
+    aggregated_position = [0]  # starting from 0
+    position = 0
+    previous_value = jumps.values[0]
+    
+    for value in jumps.values[1:]:
+        if value > previous_value:
+            position -= lot_size  # selling one lot
+        else:
+            position += lot_size  # buying one lot
+        aggregated_position.append(position)
+        previous_value = value
+    
+    return pd.Series(aggregated_position, index=jumps.index)
+
+def plot_jumps(ladderized_data):
+    jumps = filter_jumps(ladderized_data)
+    aggregated_diff = aggregate_differences(jumps)
+    fig,axs = plt.subplots(2,1,figsize=(10,10))
+    # Plotting the jumps
+    axs[0].plot(jumps.values, label='binomial jumps', linestyle='--', alpha=0.7)
+    axs[0].set_title('ladder with jumps')
+    # Adding colored points for up and down movements
+    previous_value = jumps.values[0]
+    for idx, value in enumerate(jumps.values[1:], 1):
+        if value > previous_value:
+            axs[0].plot(idx, value, 'ro')  # Red point for upward movement
+        else:
+            axs[0].plot(idx, value, 'go')  # Blue point for downward movement
+        previous_value = value
+    axs[0].legend()
+    # Plotting the aggregated differences
+    axs[1].plot(aggregated_diff.values, label='aggregated difference', linestyle='-', color='purple', alpha=0.8)
+    axs[1].legend()
+    axs[1].set_title('market depth')
+    plt.show()
+
+def convert_to_binomial(tick_data,grid_size,ladderized_function):
+    '''
+    '''
+    ladderized_data = ladderized_function(tick_data,grid_size)
+    jumps = filter_jumps(ladderized_data)
+    aggregated_diff = aggregate_differences(jumps)
+    binomial_data = aggregated_diff.diff()
+    binomial_data.dropna(inplace=True)
+    return binomial_data.to_list()
