@@ -230,11 +230,8 @@ def plot_jumps(ladderized_data):
     plt.show()
 
 def convert_to_binomial(tick_data,grid_size,ladderized_function):
-    '''
-    '''
     ladderized_data = ladderized_function(tick_data,grid_size)
     jumps = filter_jumps(ladderized_data)
-    aggregated_diff = aggregate_differences(jumps)
-    binomial_data = aggregated_diff.diff()
-    binomial_data.dropna(inplace=True)
-    return binomial_data.to_list()
+    binomial_data = jumps.diff()/grid_size
+    binomial_data = np.vectorize(lambda x: float('{:.5g}'.format(x)))(binomial_data)
+    return binomial_data[1:]
