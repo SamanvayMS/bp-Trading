@@ -201,7 +201,7 @@ def aggregate_differences(jumps,lot_size=1):
         if value > previous_value:
             position -= lot_size  # selling one lot
         else:
-            position += lot_size  # buying one lot
+            position += lot_size  #buying one lot
         aggregated_position.append(position)
         previous_value = value
     
@@ -238,3 +238,4 @@ def convert_to_binomial(tick_data,grid_size,ladderized_function):
     binomial_data = aggregated_diff.diff()
     binomial_data.dropna(inplace=True)
     return binomial_data.to_list()
+
