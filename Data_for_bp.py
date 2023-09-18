@@ -2,17 +2,30 @@ __author__ = "samanvayms"
 
 # modified from https://github.com/cuemacro/findatapy/blob/master/findatapy_examples/dukascopy_example.py 
 # Author for original - saeedamen
+"""
+This module provides functionalities for fetching, processing, and visualizing tick data for trading purposes.
+"""
 
-from findatapy.market import Market, MarketDataRequest, MarketDataGenerator
 import pandas as pd
 import numpy as np
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import matplotlib.pyplot as plt
 import mplfinance as mpf 
-import pickle
+from findatapy.market import Market, MarketDataRequest, MarketDataGenerator
+
 
 def get_tick_data(start_date,finish_date):
+    """
+    Fetch tick data for a given date range.
+
+    Parameters:
+    - start_date: str, start date in the format 'dd mmm yyyy'
+    - finish_date: str, end date in the format 'dd mmm yyyy'
+
+    Returns:
+    - df: DataFrame, tick data with bid, ask, and mid columns
+    """
     market = Market(market_data_generator=MarketDataGenerator())
 
     md_request = MarketDataRequest( start_date=start_date,
@@ -29,12 +42,18 @@ def get_tick_data(start_date,finish_date):
     return df
 
 def tick_to_ohlc(tick_df: pd.DataFrame, timeframe: str,pickle_file_name_ohlc=None) -> pd.DataFrame:
-    '''
-    Convert tick data to OHLC data.
-    1 min = 1T
-    1 Hr = 1H
-    1 Day = 1D
-    '''
+    """
+    Convert tick data to OHLC (Open-High-Low-Close) format.
+
+    Parameters:
+    - tick_df: DataFrame, tick data with a mid column
+    - timeframe: str, resampling frequency ('1T' for 1 minute, '1H' for 1 hour, etc.)
+    - pickle_file_name_ohlc: str, optional, filename to save the OHLC data as a pickle file
+
+    Returns:
+    - ohlc_df: DataFrame, OHLC data
+    """
+    
     # Assuming the DataFrame is indexed by timestamp and has a 'Mid' column
     # for the mid prices. Adapt as necessary.
 
@@ -50,13 +69,18 @@ def tick_to_ohlc(tick_df: pd.DataFrame, timeframe: str,pickle_file_name_ohlc=Non
     return ohlc_df
 
 def get_candlestick_data(start_date,finish_date,timeframe: str):
-    '''get candlestick data from start_date to finish_date with timeframe
-    date format: 'dd mmm yyyy' like '14 Jun 2016'
-    timeframe format:
-    1 min = 1T
-    1 Hr = 1H
-    1 Day = 1D
-    '''
+    """
+    Fetch tick data and convert it to candlestick (OHLC) format.
+
+    Parameters:
+    - start_date: str, start date in the format 'dd mmm yyyy'
+    - finish_date: str, end date in the format 'dd mmm yyyy'
+    - timeframe: str, resampling frequency ('1T' for 1 minute, '1H' for 1 hour, etc.)
+
+    Returns:
+    - ohlc_df: DataFrame, OHLC data
+    - tick_data: DataFrame, raw tick data
+    """
     tick_data = get_tick_data(start_date,finish_date)
     ohlc_df = tick_to_ohlc(tick_data, timeframe)
     return ohlc_df,tick_data
@@ -105,14 +129,47 @@ def plot_data(ohlc_df,title='canlestick chart'):
     # Create a candlestick chart using mplfinance
     mpf.plot(ohlc_df, type='candle', title=title,tight_layout=True, ylabel='Price', figratio=(15, 10),figsize=(15,7))
     plt.show()
+
+# function that takes in a adate range and if across multiple years splits into year pairs.
+def year_order(start_date, end_date):
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
+    if start_date.year == end_date.year:
+        return {start_date.year: [start_date, end_date]}
+    else:
+        year_dict = {}
+        for year in range(start_date.year, end_date.year + 1):
+            if year == start_date.year:
+                year_dict[year] = [start_date, pd.to_datetime(str(year+1) + '-12-31')]
+            elif year == end_date.year:
+                year_dict[year] = [pd.to_datetime(str(year) + '-01-01'), end_date]
+            else:
+                year_dict[year] = [pd.to_datetime(str(year) + '-01-01'), pd.to_datetime(str(year) + '-12-31')]
+        return year_dict
     
+# extracts data from various files based on date range given and then returns it as a single dataframe
+def data_gather_from_files(start_date,end_date,file_path='Data for Practicum 2'):
+    year_dict = year_order(start_date,end_date)
+    full_df = pd.DataFrame()
+    for year in year_dict.keys():
+        year_df = pd.read_pickle(file_path + '/ticks_' + str(year) + '.pkl')
+        year_dict[year][0] = year_dict[year][0].tz_localize('UTC')
+        year_dict[year][1] = year_dict[year][1].tz_localize('UTC')
+        year_df = year_df.loc[year_dict[year][0]:year_dict[year][1]]
+        full_df = pd.concat([full_df,year_df])
+    return full_df
+
 def ladderize_open(tick_data, grid_size):
     """
-    Convert tick data into step-based data using a specified grid size.
+    Convert tick data into a ladderized format using a specified grid size. 
+    This function uses the open price method.
 
-    :param tick_data: A pandas Series of tick data.
-    :param grid_size: The size of the grid to discretize the tick data.
-    :return: A pandas Series of ladderized data.
+    Parameters:
+    - tick_data: Series, tick data
+    - grid_size: float, size of the grid to discretize the tick data
+
+    Returns:
+    - Series, ladderized data
     """
     ladderized_data = [tick_data.iloc[0]]
     for i in range(1, len(tick_data)):
@@ -128,11 +185,15 @@ def ladderize_open(tick_data, grid_size):
 
 def ladderize_absolute(tick_data, grid_size):
     """
-    Convert tick data into step-based data using a specified grid size.
+    Convert tick data into a ladderized format using a specified grid size. 
+    This function uses the absolute price method.
 
-    :param tick_data: A pandas Series of tick data.
-    :param grid_size: The size of the grid to discretize the tick data.
-    :return: A pandas Series of ladderized data.
+    Parameters:
+    - tick_data: Series, tick data
+    - grid_size: float, size of the grid to discretize the tick data
+
+    Returns:
+    - Series, ladderized data
     """
     # Initialize ladder at the nearest rounded price level based on grid size
     ladderized_data = [(tick_data.iloc[0] / grid_size).round() * grid_size]
@@ -295,6 +356,25 @@ def plot_trades(grid_jumps,PNL,N,lookback=10):
     plt.show()
     
 def run_strategy_continuous(tick_data,grid_sizing,lot_sizing,ladder_function=ladderize_absolute,multiplier=1,indicator = False,print_trade_book=False,trade_plot=False):
+        """
+    Run a continuous trading strategy based on ladderized tick data.
+
+    Parameters:
+    - tick_data: Series, raw tick data
+    - grid_sizing: float, grid size for ladderization
+    - lot_sizing: float, initial lot size for trading
+    - ladder_function: function, ladderization function (default is ladderize_absolute)
+    - multiplier: float, multiplier for position sizing (default is 1)
+    - indicator: bool, whether to use an indicator for position sizing (default is False)
+    - print_trade_book: bool, whether to print the trade book (default is False)
+    - trade_plot: bool, whether to plot the trades (default is False)
+
+    Returns:
+    - PNL: array, profit and loss for each time step
+    - N: array, number of lots held at each time step
+    - P: array, position value at each time step
+    - trades: DataFrame, trade book
+    """
     grid_jumps,binomial_data = convert_to_grid_binomial_data(tick_data,grid_sizing,ladder_function)
     lookback = 15
     indicator_data = []
@@ -318,4 +398,5 @@ def run_strategy_continuous(tick_data,grid_sizing,lot_sizing,ladder_function=lad
     if trade_plot:
         plot_trades(grid_jumps,PNL,N,lookback=lookback)
     return PNL,N,P,trades
+
 
