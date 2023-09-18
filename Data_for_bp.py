@@ -356,7 +356,7 @@ def plot_trades(grid_jumps,PNL,N,lookback=10):
     plt.show()
     
 def run_strategy_continuous(tick_data,grid_sizing,lot_sizing,ladder_function=ladderize_absolute,multiplier=1,indicator = False,print_trade_book=False,trade_plot=False):
-        """
+    """
     Run a continuous trading strategy based on ladderized tick data.
 
     Parameters:
