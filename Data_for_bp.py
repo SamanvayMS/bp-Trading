@@ -325,8 +325,8 @@ def build_lot_sizing(lot_sizing,binomial_data,multiplier=1,indicator_data=[]):
         positions[np.isnan(positions)] = 0
         return positions
     
-def indicator_prep(data,grid_sizing):
-    data = velocity(data.ewm(span=10).mean(),grid_sizing).shift(1) # we shift this because our lot sizing will be decided by what the values are prior not current
+def indicator_prep(data,grid_sizing,lookback=200):
+    data = velocity(data.ewm(span=lookback).mean(),grid_sizing).shift(1) # we shift this because our lot sizing will be decided by what the values are prior not current
     data[np.isnan(data)] = 0
     return data
 
@@ -347,15 +347,15 @@ def plot_trades(grid_jumps,PNL,N,lookback=10):
             ax.axvline(idx, alpha=0.2, color='gray')
 
     axs[0].set_title('buy sell points')
-    axs[1].plot(N)
+    axs[1].plot(N,drawstyle='steps-post')
     # change number of digits in y axis
     axs[1].yaxis.set_major_formatter(plt.FormatStrFormatter('%.2f'))
     axs[1].set_title('lots held')
-    axs[2].plot(PNL)
+    axs[2].plot(PNL,drawstyle='steps-post')
     axs[2].set_title('PNL')
     plt.show()
     
-def run_strategy_continuous(tick_data,grid_sizing,lot_sizing,ladder_function=ladderize_absolute,multiplier=1,indicator = False,print_trade_book=False,trade_plot=False):
+def run_strategy_continuous(tick_data,grid_sizing,lot_sizing,ladder_function=ladderize_absolute,multiplier=1,indicator = False,lookback = 200,print_trade_book=False,trade_plot=False):
     """
     Run a continuous trading strategy based on ladderized tick data.
 
@@ -376,10 +376,9 @@ def run_strategy_continuous(tick_data,grid_sizing,lot_sizing,ladder_function=lad
     - trades: DataFrame, trade book
     """
     grid_jumps,binomial_data = convert_to_grid_binomial_data(tick_data,grid_sizing,ladder_function)
-    lookback = 15
     indicator_data = []
     if indicator:
-        indicator_data = indicator_prep(grid_jumps,grid_sizing)
+        indicator_data = indicator_prep(grid_jumps,grid_sizing,lookback=lookback)
     T = len(binomial_data)
     PNL = np.zeros(T)
     P = np.zeros(T)
