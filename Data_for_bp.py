@@ -5,6 +5,7 @@ __author__ = "samanvayms"
 
 from findatapy.market import Market, MarketDataRequest, MarketDataGenerator
 import pandas as pd
+import numpy as np
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import matplotlib.pyplot as plt
@@ -123,7 +124,7 @@ def ladderize_open(tick_data, grid_size):
             ladderized_data.append(ladderized_data[-1])
     # Adding the final close price
     ladderized_data[-1]=tick_data.iloc[-1]
-    return pd.Series(ladderized_data, index=tick_data.index)
+    return pd.Series(np.round(ladderized_data,4), index=tick_data.index)
 
 def ladderize_absolute(tick_data, grid_size):
     """
@@ -142,9 +143,10 @@ def ladderize_absolute(tick_data, grid_size):
             ladderized_data.append(ladderized_data[-1] - grid_size)
         else:
             ladderized_data.append(ladderized_data[-1])
-    # Adding the final close price
+    # Adding the final close price and changing th open price
     ladderized_data[-1]=tick_data.iloc[-1]
-    return pd.Series(ladderized_data, index=tick_data.index)
+    ladderized_data[0]=tick_data.iloc[0]
+    return pd.Series(np.round(ladderized_data,4), index=tick_data.index)
 
 def plot_colored_ladder(ladderized_data):
     for i in range(1, len(ladderized_data)):
@@ -182,7 +184,6 @@ def filter_jumps(ladderized_data):
 
     # Filter where the difference is non-zero and include the first data point
     jumps = ladderized_data[diff != 0.0]
-    jumps = pd.concat([ladderized_data.iloc[:1], jumps])
 
     return jumps
 
@@ -204,7 +205,7 @@ def aggregate_differences(jumps,lot_size=1):
             position += lot_size  # buying one lot
         aggregated_position.append(position)
         previous_value = value
-    
+    aggregated_position[-1]=0 # closing the position
     return pd.Series(aggregated_position, index=jumps.index)
 
 def plot_jumps(ladderized_data):
@@ -217,21 +218,104 @@ def plot_jumps(ladderized_data):
     # Adding colored points for up and down movements
     previous_value = jumps.values[0]
     for idx, value in enumerate(jumps.values[1:], 1):
-        if value > previous_value:
+        if idx == len(jumps)-1:
+            continue
+        elif value > previous_value:
             axs[0].plot(idx, value, 'ro')  # Red point for upward movement
+        elif value < previous_value:
+            axs[0].plot(idx, value, 'go')  # green point for downward movement
         else:
-            axs[0].plot(idx, value, 'go')  # Blue point for downward movement
+            axs[0].plot(idx, value, 'bo') # blue point for no change
         previous_value = value
+        
+        # Add vertical line to all subplots
+        for ax in axs:
+            ax.axvline(idx, alpha=0.5, color='gray')
+            
+            
     axs[0].legend()
     # Plotting the aggregated differences
-    axs[1].plot(aggregated_diff.values, label='aggregated difference', linestyle='-', color='purple', alpha=0.8)
+    axs[1].plot(aggregated_diff.values, label='position', linestyle='-', color='purple', alpha=0.8, drawstyle='steps-post')
     axs[1].legend()
-    axs[1].set_title('market depth')
+    axs[1].set_title('positions')
     plt.show()
 
-def convert_to_binomial(tick_data,grid_size,ladderized_function):
+def convert_to_grid_binomial_data(tick_data,grid_size,ladderized_function):
     ladderized_data = ladderized_function(tick_data,grid_size)
     jumps = filter_jumps(ladderized_data)
-    binomial_data = jumps.diff()/grid_size
-    binomial_data = np.vectorize(lambda x: float('{:.5g}'.format(x)))(binomial_data)
-    return binomial_data[1:]
+    binomial_data = jumps.diff()
+    binomial_data[1:] = np.where(binomial_data[1:] > 0,1,-1)
+    binomial_data[0] = 0
+    return jumps,binomial_data
+
+def velocity(data,grid_sizing):
+    return np.round(5*data.diff()/(data)/grid_sizing,1)
+
+def acceleration(data,grid_sizing):
+    return np.round(5*data.diff().diff()/(data)/grid_sizing,1)
+
+def build_lot_sizing(lot_sizing,binomial_data,multiplier=1,indicator_data=[]):
+    T = len(binomial_data)
+    if len(indicator_data) == 0: # No indicator data
+        return [lot_sizing * (multiplier**i) for i in range(T)]
+    else: # Indicator data is present
+        scaling_criteria =  binomial_data * indicator_data  # +ve if both are same sign hence signifies movement in same direction , we do not scale in that case
+        positions = np.where(scaling_criteria > 0,1,1+abs(scaling_criteria))*lot_sizing # +ve if both are same sign hence signifies movement in same direction , we do not scale in that case
+        positions[np.isnan(positions)] = 0
+        return positions
+    
+def indicator_prep(data,grid_sizing):
+    data = velocity(data.ewm(span=10).mean(),grid_sizing).shift(1) # we shift this because our lot sizing will be decided by what the values are prior not current
+    data[np.isnan(data)] = 0
+    return data
+
+def plot_trades(grid_jumps,PNL,N,lookback=10):
+    fig,axs = plt.subplots(3,1,figsize=(15,15))
+    axs[0].plot(grid_jumps.values, label='jumps', linestyle='--')
+    axs[0].plot(grid_jumps.ewm(span=lookback).mean().values, label='indicator', linestyle='-',alpha=0.6)
+    for idx, i in enumerate(grid_jumps):
+        if grid_jumps[idx] > grid_jumps[idx-1]:
+            axs[0].plot(idx, i, 'ro')  # Red point for upward movement
+        elif grid_jumps[idx] < grid_jumps[idx-1]:
+            axs[0].plot(idx, i, 'go')  # Green point for downward movement
+        else:
+            axs[0].plot(idx, i, 'bo')  # Blue point for no change
+
+        # Add vertical line to all subplots
+        for ax in axs:
+            ax.axvline(idx, alpha=0.2, color='gray')
+
+    axs[0].set_title('buy sell points')
+    axs[1].plot(N)
+    # change number of digits in y axis
+    axs[1].yaxis.set_major_formatter(plt.FormatStrFormatter('%.2f'))
+    axs[1].set_title('lots held')
+    axs[2].plot(PNL)
+    axs[2].set_title('PNL')
+    plt.show()
+    
+def run_strategy_continuous(tick_data,grid_sizing,lot_sizing,ladder_function=ladderize_absolute,multiplier=1,indicator = False,print_trade_book=False,trade_plot=False):
+    grid_jumps,binomial_data = convert_to_grid_binomial_data(tick_data,grid_sizing,ladder_function)
+    lookback = 15
+    indicator_data = []
+    if indicator:
+        indicator_data = indicator_prep(grid_jumps,grid_sizing)
+    T = len(binomial_data)
+    PNL = np.zeros(T)
+    P = np.zeros(T)
+    N = np.zeros(T)
+    trades = pd.DataFrame(columns=['t','price','Previous_lots','current_lots','position','PNL'])
+    position_sizing = build_lot_sizing(lot_sizing,binomial_data,multiplier=multiplier,indicator_data=indicator_data)
+    for t in np.arange(0,T):
+        N[t] = N[t-1] - position_sizing[t] * binomial_data[t]
+        P[t] = N[t] * grid_jumps[t]
+        PNL[t] = PNL[t-1] + N[t-1] * (grid_jumps[t] - grid_jumps[t-1])
+        PNL[t]=np.round(PNL[t],2)
+        if print_trade_book:
+            print('t = {}, price={}, Previous_lots = {},  current_lots= {}, position = {}, PNL = {}'.format(t,grid_jumps[t],N[t-1],N[t],P[t],PNL[t]))
+        trade = pd.Series({'t':t,'price':grid_jumps[t],'Previous_lots':N[t-1],'current_lots':N[t],'position':P[t],'PNL':PNL[t]})
+        trades = pd.concat([trades, trade.to_frame().T])
+    if trade_plot:
+        plot_trades(grid_jumps,PNL,N,lookback=lookback)
+    return PNL,N,P,trades
+
