@@ -603,7 +603,7 @@ def run_strategy_eval(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_fu
     if trade_plot:
         plot_trades(grid_jumps,np.cumsum(R_PNL),U_PNL,N,lookback=lookback)
     trades = format_df(trades)
-    return trades,PNL[-1],np.sum(R_PNL),U_PNL[-1],,np.max(N),np.min(N),np.max(P),np.min(P)
+    return trades,PNL[-1],np.sum(R_PNL),U_PNL[-1],np.max(N),np.min(N),np.max(P),np.min(P)
 
 def run_strategy_optimised(tick_data,grid_sizing,lot_sizing,ladder_depth = 10,ladder_function=ladderize_absolute,multiplier=1,indicator = False,lookback = 200):
 
