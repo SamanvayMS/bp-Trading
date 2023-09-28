@@ -671,9 +671,9 @@ def run_strategy_optimised(tick_data,grid_sizing,lot_sizing,ladder_depth = 10,la
     position = 0
     position_sizing = build_lot_sizing(lot_sizing,binomial_data,multiplier=multiplier,indicator_data=indicator_data)
     avg_price = 0
-    
     max_position = 0
     min_U_PNL = 0
+    max_loss = 0
     for t in np.arange(0,T):
         lots_in_order = - position_sizing[t] * binomial_data[t]
         previous_lots = current_lots
