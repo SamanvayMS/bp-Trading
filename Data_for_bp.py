@@ -700,5 +700,6 @@ def run_strategy_optimised(tick_data,grid_sizing,lot_sizing,ladder_depth = 10,la
             min_U_PNL = U_PNL
         if abs(position) > max_position:
             max_position = abs(position)
-            
-    return PNL, min_U_PNL, max_position, R_PNL
+        if PNL < max_loss:
+            max_loss = PNL
+    return max_loss, min_U_PNL, max_position, R_PNL
