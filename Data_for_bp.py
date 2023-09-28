@@ -13,6 +13,11 @@ from dateutil.relativedelta import relativedelta
 import matplotlib.pyplot as plt
 import mplfinance as mpf 
 from findatapy.market import Market, MarketDataRequest, MarketDataGenerator
+import time
+from numba import jit
+
+# ****************************************************************************************************************
+# Data Gathering Functions
 
 
 def get_tick_data(start_date,finish_date):
@@ -159,6 +164,13 @@ def data_gather_from_files(start_date,end_date,file_path='Data for Practicum 2')
         full_df = pd.concat([full_df,year_df])
     return full_df
 
+# ****************************************************************************************************************
+# ****************************************************************************************************************
+
+# Data Engineering Functions
+
+# ****************************************************************************************************************
+# Ladderise Functions
 def ladderize_open(tick_data, grid_size):
     """
     Convert tick data into a ladderized format using a specified grid size. 
@@ -233,6 +245,80 @@ def plot_ladderized(start_date, end_date, grid_size=0.0005, ladderize_function=l
     plt.legend()
     plt.show()
     
+@jit(nopython=True)
+def ladderize_open_loop(n, tick_data, ladderized_data, grid_size):
+    ladderized_data[0] = tick_data[0]
+    for i in range(1, n):
+        last_ladder = ladderized_data[i - 1]
+        tick = tick_data[i]
+        
+        if tick > last_ladder + grid_size:
+            ladderized_data[i] = last_ladder + grid_size
+        elif tick < last_ladder - grid_size:
+            ladderized_data[i] = last_ladder - grid_size
+        else:
+            ladderized_data[i] = last_ladder
+
+def ladderize_open_optimised(tick_data, grid_size):
+    """
+    Convert tick data into step-based data using a specified grid size.
+
+    :param tick_data: A pandas Series of tick data.
+    :param grid_size: The size of the grid to discretize the tick data.
+    :return: A pandas Series of ladderized data.
+    """
+    n = len(tick_data)
+    ladderized_data = np.empty(n, dtype=np.float64)
+    tick_data_np = tick_data.values.astype(np.float64)
+
+    ladderize_open_loop(n, tick_data_np, ladderized_data, grid_size)
+
+    # Overwrite the last tick to the exact closing price
+    ladderized_data[-1] = tick_data.iloc[-1]
+    
+    return pd.Series(np.round(ladderized_data, 4), index=tick_data.index)
+
+@jit(nopython=True)
+def ladderize_absolute_loop(n, tick_data, ladderized_data, grid_size, rounded_open):
+    last_ladder = rounded_open
+    for i in range(1,n):
+        tick = tick_data[i]
+        if tick > last_ladder + grid_size:
+            last_ladder += grid_size
+        elif tick < last_ladder - grid_size:
+            last_ladder -= grid_size
+        ladderized_data[i] = last_ladder
+
+def ladderize_absolute_optimised(tick_data, grid_size):
+    """
+    Convert tick data into step-based data using a specified grid size.
+
+    :param tick_data: A pandas Series of tick data.
+    :param grid_size: The size of the grid to discretize the tick data.
+    :return: A pandas Series of ladderized data.
+    """
+    n = len(tick_data)
+    ladderized_data = np.empty(n, dtype=np.float64)
+    
+    # Initialize the first point to the actual opening price
+    ladderized_data[0] = tick_data.iloc[0]
+    
+    # Round the opening price for grid calculations
+    rounded_open = (tick_data.iloc[0] / grid_size).round() * grid_size
+    
+    tick_data_np = tick_data.values.astype(np.float64)
+    
+    ladderize_absolute_loop(n, tick_data_np, ladderized_data, grid_size, rounded_open)
+
+    # Overwrite the last tick to the exact closing price
+    ladderized_data[-1] = tick_data.iloc[-1]
+    
+    return pd.Series(np.round(ladderized_data, 4), index=tick_data.index)
+
+# ****************************************************************************************************************
+
+# Filter jumps and aggregate differences
+
 def filter_jumps(ladderized_data):
     """
     Filters ladderized data to keep only the changes in price.
@@ -301,6 +387,24 @@ def plot_jumps(ladderized_data):
     axs[1].set_title('positions')
     plt.show()
 
+# ****************************************************************************************************************
+
+# Convert to Binomial data and apply Depth constraint
+
+def apply_depth_constraint(data, depth=10):
+    sum = 0
+    for i,point in enumerate(data):
+        sum = sum + point
+        if (sum > depth) and (point > 0):
+            data[i] = 0
+            sum = sum - point
+        elif (sum < -depth) and (point < 0):
+            data[i] = 0
+            sum = sum - point
+        else:
+            continue
+    return data
+
 def convert_to_grid_binomial_data(tick_data,grid_size,ladderized_function,ladder_depth=10):
     """
     Convert tick data to a binomial grid representation using a ladderized function.
@@ -333,26 +437,6 @@ def convert_to_grid_binomial_data(tick_data,grid_size,ladderized_function,ladder
     binomial_data = apply_depth_constraint(binomial_data,ladder_depth)
     return jumps,binomial_data
 
-def velocity(data,grid_sizing,indicator_scale=5):
-    return np.round(indicator_scale*data.diff()/(data)/grid_sizing,1)
-
-def acceleration(data,grid_sizing,indicator_scale=5):
-    return np.round(indicator_scale*data.diff().diff()/(data)/grid_sizing,1)
-
-def apply_depth_constraint(data, depth=10):
-    sum = 0
-    for i,point in enumerate(data):
-        sum = sum + point
-        if (sum > depth) and (point > 0):
-            data[i] = 0
-            sum = sum - point
-        elif (sum < -depth) and (point < 0):
-            data[i] = 0
-            sum = sum - point
-        else:
-            continue
-    return data
-
 def build_lot_sizing(lot_sizing,binomial_data,multiplier=1,indicator_data=[],min_lot_size = 1000):
     """
     Compute the lot sizing for trading based on binomial data and optional indicator data.
@@ -382,7 +466,17 @@ def build_lot_sizing(lot_sizing,binomial_data,multiplier=1,indicator_data=[],min
         positions = np.where(scaling_criteria > 0,1/(1+abs(scaling_criteria)),1+abs(scaling_criteria))*lot_sizing # +ve if both are same sign hence signifies movement in same direction , we do not scale in that case
         positions[np.isnan(positions)] = 0
         return np.round(positions/min_lot_size,0)*min_lot_size
-    
+
+# ****************************************************************************************************************
+
+# Indicator Preparation Functions
+
+def velocity(data,grid_sizing,indicator_scale=5):
+    return np.round(indicator_scale*data.diff()/(data)/grid_sizing,1)
+
+def acceleration(data,grid_sizing,indicator_scale=5):
+    return np.round(indicator_scale*data.diff().diff()/(data)/grid_sizing,1)
+
 def indicator_prep(data,grid_sizing,lookback = 200,Type = 'v',indicator_scale=5):
     if Type == 'a':
         data = acceleration(data.ewm(span=lookback).mean(),grid_sizing,indicator_scale).shift(1)
@@ -393,6 +487,10 @@ def indicator_prep(data,grid_sizing,lookback = 200,Type = 'v',indicator_scale=5)
         return None
     data[np.isnan(data)] = 0
     return data
+
+# ****************************************************************************************************************
+# ****************************************************************************************************************
+
 
 def plot_trades(grid_jumps, R_PNL, U_PNL, N, lookback=200):
     """
@@ -463,55 +561,7 @@ def format_df(df):
     
     return formatted_df
 
-def run_strategy_total_PNL(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_function=ladderize_absolute,multiplier=1,indicator = False,lookback = 200,print_trade_book=False,trade_plot=False):
-    """
-    Run a continuous trading strategy based on ladderized tick data.
-
-    Parameters:
-    - tick_data: Series, raw tick data
-    - grid_sizing: float, grid size for ladderization
-    - lot_sizing: float, initial lot size for trading
-    - ladder_function: function, ladderization function (default is ladderize_absolute)
-    - multiplier: float, multiplier for position sizing (default is 1)
-    - indicator: bool, whether to use an indicator for position sizing (default is False)
-    - print_trade_book: bool, whether to print the trade book (default is False)
-    - trade_plot: bool, whether to plot the trades (default is False)
-
-    Returns:
-    - PNL: array, profit and loss for each time step
-    - N: array, number of lots held at each time step
-    - P: array, position value at each time step
-    - trades: DataFrame, trade book
-    """
-    grid_jumps,binomial_data = convert_to_grid_binomial_data(tick_data,grid_sizing,ladder_function,ladder_depth)
-    indicator_data = []
-    if indicator:
-        indicator_data = indicator_prep(grid_jumps,grid_sizing,lookback=lookback)
-        
-
-    T = len(binomial_data)
-    PNL = np.zeros(T)
-    P = np.zeros(T)
-    N = np.zeros(T)
-    trades = pd.DataFrame(columns=['t','price','Previous_lots','current_lots','position','PNL'])
-    
-    position_sizing = build_lot_sizing(lot_sizing,binomial_data,multiplier=multiplier,indicator_data=indicator_data)
-    
-    for t in np.arange(0,T):
-        N[t] = N[t-1] - position_sizing[t] * binomial_data[t]
-        P[t] = N[t] * grid_jumps[t]
-        PNL[t] = PNL[t-1] + N[t-1] * (grid_jumps[t] - grid_jumps[t-1])
-        PNL[t]=np.round(PNL[t],2)
-        if print_trade_book:
-            print('t = {}, price={}, Previous_lots = {},  current_lots= {}, position = {}, PNL = {}'.format(t,grid_jumps[t],N[t-1],N[t],P[t],PNL[t]))
-        trade = pd.Series({'t':t,'price':grid_jumps[t],'Previous_lots':N[t-1],'current_lots':N[t],'position':P[t],'PNL':PNL[t]})
-        trades = pd.concat([trades, trade.to_frame().T])
-    if trade_plot:
-        plot_trades(grid_jumps,PNL,N,lookback=lookback)
-    trades = format_df(trades)
-    return PNL,N,P,trades
-
-def run_strategy_eval(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_function=ladderize_absolute,multiplier=1,indicator = False,lookback = 200,print_trade_book=False,trade_plot=False):
+def run_strategy_eval(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_function=ladderize_absolute_optimised,multiplier=1,indicator = False,lookback = 200,print_trade_book=False,trade_plot=False,print_trade_df=False):
     """
     Evaluate and visualize a trading strategy based on ladderized tick data and optional indicators.
 
@@ -561,9 +611,9 @@ def run_strategy_eval(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_fu
         if (N[t]*lots_in_order <= 0) and (lots_in_order != 0):# if we are closing a position 
         # we check if the final position and the order are in opposite directions and if the order is not 0 (i.e. we are not opening a position)
         # ----- need to improve condition when we have lot size scaling. (lets say we are - ve 10 and we buy 20 we have realised PNL only for the first 10)
-            R_PNL[t] = - (grid_jumps[t] - avg_price) * lots_in_order # realised PNL
+            R_PNL[t] = R_PNL[t-1] - (grid_jumps[t] - avg_price) * lots_in_order # realised PNL
         else: # if we are opening a position or adding to an existing position
-            R_PNL[t] = 0
+            R_PNL[t] = R_PNL[t-1] # realised PNL remains the same
             if N[t]!=0: # since we are adding to an existing position we need to update the avg price
                 avg_price = (avg_price * N[t-1] + grid_jumps[t]*lots_in_order)/N[t] # update avg price
             # if N[t] == 0 we are closing a position and hence avg price is not updated
@@ -579,10 +629,9 @@ def run_strategy_eval(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_fu
         
         # checks if profit calculations are right
         test = True  # set to true to test
-        total_error = 0
-        error = np.round(PNL[t] - np.sum(R_PNL[:t+1]) + U_PNL[t],2) # total profit must be equal to cumulative sum of realised + unrealised profit
+        error = np.round(PNL[t] - R_PNL[t] - U_PNL[t],2) # total profit must be equal to cumulative sum of realised + unrealised profit
         if (error!=0) and test:
-            total_error += error
+            print('error at t = {}, error = {}'.format(t,error))
 
         
         if print_trade_book:
@@ -594,18 +643,18 @@ def run_strategy_eval(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_fu
             else:
                 print('sell {} lots at price {}'.format(-lots_in_order,grid_jumps[t]))
             print('average price = {}'.format(avg_price))
-            print('realised PNL = {}'.format(R_PNL[t]))
-            print('cummulative realised PNL = {}'.format(np.sum(R_PNL[:t+1])))
+            print('cummulative realised PNL = {}'.format(R_PNL[t]))
             print('unrealised PNL = {}'.format(U_PNL[t]))
             print('PNL = {}'.format(PNL[t]))
         trade = pd.Series({'t':t,'price':grid_jumps[t],'Previous_lots':N[t-1],'current_lots':N[t],'position':P[t],'R_PNL':R_PNL[t],'U_PNL':U_PNL[t],'PNL':PNL[t],'average_price':avg_price})
         trades = pd.concat([trades, trade.to_frame().T])
     if trade_plot:
-        plot_trades(grid_jumps,np.cumsum(R_PNL),U_PNL,N,lookback=lookback)
-    trades = format_df(trades)
-    return trades,PNL[-1],np.sum(R_PNL),U_PNL[-1],np.max(N),np.min(N),np.max(P),np.min(P)
+        plot_trades(grid_jumps,R_PNL,U_PNL,N,lookback=lookback)
+    if print_trade_df:
+        print(format_df(trades))
+    return PNL,R_PNL,U_PNL,N,P
 
-def run_strategy_optimised(tick_data,grid_sizing,lot_sizing,ladder_depth = 10,ladder_function=ladderize_absolute,multiplier=1,indicator = False,lookback = 200):
+def run_strategy_optimised(tick_data,grid_sizing,lot_sizing,ladder_depth = 10,ladder_function=ladderize_absolute_optimised,multiplier=1,indicator = False,lookback = 200):
 
     grid_jumps,binomial_data = convert_to_grid_binomial_data(tick_data,grid_sizing,ladder_function,ladder_depth)
     indicator_data = []
@@ -643,6 +692,7 @@ def run_strategy_optimised(tick_data,grid_sizing,lot_sizing,ladder_depth = 10,la
         PNL = PNL + previous_lots * (grid_jumps[t] - grid_jumps[t-1])
         
         U_PNL = (grid_jumps[t] - avg_price) * current_lots # unrealised PNL
+
         PNL=np.round(PNL,4)
         U_PNL=np.round(U_PNL,4)
         R_PNL=np.round(R_PNL,4)
