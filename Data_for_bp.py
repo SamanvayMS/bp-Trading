@@ -491,6 +491,7 @@ def indicator_prep(data,grid_sizing,lookback = 200,Type = 'v',indicator_scale=5)
 # ****************************************************************************************************************
 # ****************************************************************************************************************
 
+# strategy evaluation functions
 
 def plot_trades(grid_jumps, R_PNL, U_PNL, N, lookback=200):
     """
@@ -703,3 +704,5 @@ def run_strategy_optimised(tick_data,grid_sizing,lot_sizing,ladder_depth = 10,la
         if PNL < max_loss:
             max_loss = PNL
     return max_loss, min_U_PNL, max_position, R_PNL
+
+# ****************************************************************************************************************
