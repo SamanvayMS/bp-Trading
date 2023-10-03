@@ -437,7 +437,17 @@ def convert_to_grid_binomial_data(tick_data,grid_size,ladderized_function,ladder
     binomial_data = apply_depth_constraint(binomial_data,ladder_depth)
     return jumps,binomial_data
 
-def build_lot_sizing(lot_sizing,binomial_data,multiplier=1,indicator_data=[],min_lot_size = 1000):
+@jit(nopython=True)
+def loop_to_scale_lots(binomial_data,positions,lot_sizing,multiplier):
+    for i in range(1,len(binomial_data)):
+        if (binomial_data[i] == 1 and binomial_data[i-1] == 1) or (binomial_data[i] == -1 and binomial_data[i-1] == -1): # checks if its a consecutive order in the same direction
+            positions[i] = positions[i-1]*multiplier
+        else:
+            positions[i] = lot_sizing
+    return positions
+
+
+def build_lot_sizing(lot_sizing,binomial_data,multiplier=1,indicator_data=[],min_lot_size = 10000,stationary_reference = False):
     """
     Compute the lot sizing for trading based on binomial data and optional indicator data.
 
@@ -460,10 +470,20 @@ def build_lot_sizing(lot_sizing,binomial_data,multiplier=1,indicator_data=[],min
     """
     T = len(binomial_data)
     if len(indicator_data) == 0: # No indicator data
-        return [lot_sizing * (multiplier**i) for i in range(T)]
+        if stationary_reference:
+            binomial_depth = np.cumsum(binomial_data)
+            mask = mask = ((binomial_depth > 0) & (binomial_data == 1)) | ((binomial_depth < 0) & (binomial_data == -1))
+            positions = np.ones(T)*lot_sizing
+            positions[mask] *= multiplier**(abs(binomial_depth[mask])-1)
+        else:
+            positions = np.zeros(T,dtype=np.int64)
+            binomial_data = np.array(binomial_data,dtype=np.int64)
+            positions = loop_to_scale_lots(binomial_data,positions,lot_sizing,multiplier) # refer to function for details on how it works
+        return positions
     else: # Indicator data is present
-        scaling_criteria =  binomial_data * indicator_data  # +ve if both are same sign hence signifies movement in same direction, we scale in by inverse
-        positions = np.where(scaling_criteria > 0,1/(1+abs(scaling_criteria)),1+abs(scaling_criteria))*lot_sizing # +ve if both are same sign hence signifies movement in same direction , we do not scale in that case
+        scaling_criteria =  binomial_data * indicator_data  # +ve if both are same sign hence signifies movement in same direction , we do not scale in that case
+        #positions = np.where(scaling_criteria > 0,1/(1+abs(scaling_criteria)),1+abs(scaling_criteria))*lot_sizing # +ve if both are same sign hence signifies movement in same direction, we scale in by inverse
+        positions = np.where(scaling_criteria > 0,1,1+abs(scaling_criteria))*lot_sizing
         positions[np.isnan(positions)] = 0
         return np.round(positions/min_lot_size,0)*min_lot_size
 
@@ -562,7 +582,7 @@ def format_df(df):
     
     return formatted_df
 
-def run_strategy_eval(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_function=ladderize_absolute_optimised,multiplier=1,indicator = False,lookback = 200,print_trade_book=False,trade_plot=False,print_trade_df=False):
+def run_strategy_eval(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_function=ladderize_absolute_optimised,multiplier=1,stationary_reference=False,indicator = False,indicator_type='v',indicator_scale=5,lookback = 200,print_trade_book=False,trade_plot=False):
     """
     Evaluate and visualize a trading strategy based on ladderized tick data and optional indicators.
 
@@ -591,7 +611,7 @@ def run_strategy_eval(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_fu
     grid_jumps,binomial_data = convert_to_grid_binomial_data(tick_data,grid_sizing,ladder_function,ladder_depth)
     indicator_data = []
     if indicator:
-        indicator_data = indicator_prep(grid_jumps,grid_sizing,lookback=lookback)
+        indicator_data = indicator_prep(grid_jumps,grid_sizing,lookback=lookback,Type=indicator_type,indicator_scale=indicator_scale)
         
 
     T = len(binomial_data)
@@ -602,7 +622,7 @@ def run_strategy_eval(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_fu
     N = np.zeros(T)
     trades = pd.DataFrame(columns=['t','price','Previous_lots','current_lots','position','R_PNL','U_PNL','PNL'])
     
-    position_sizing = build_lot_sizing(lot_sizing,binomial_data,multiplier=multiplier,indicator_data=indicator_data)
+    position_sizing = build_lot_sizing(lot_sizing,binomial_data,multiplier=multiplier,indicator_data=indicator_data,stationary_reference=stationary_reference)
     avg_price = 0
     for t in np.arange(0,T):
         lots_in_order = - position_sizing[t] * binomial_data[t]
@@ -651,16 +671,15 @@ def run_strategy_eval(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_fu
         trades = pd.concat([trades, trade.to_frame().T])
     if trade_plot:
         plot_trades(grid_jumps,R_PNL,U_PNL,N,lookback=lookback)
-    if print_trade_df:
         print(format_df(trades))
     return PNL,R_PNL,U_PNL,N,P
 
-def run_strategy_optimised(tick_data,grid_sizing,lot_sizing,ladder_depth = 10,ladder_function=ladderize_absolute_optimised,multiplier=1,indicator = False,lookback = 200):
+def run_strategy_optimised(tick_data,grid_sizing,lot_sizing,ladder_depth = 10,ladder_function=ladderize_absolute_optimised,multiplier=1,stationary_reference=False,indicator = False,indicator_type='v',indicator_scale=5,lookback = 200):
 
     grid_jumps,binomial_data = convert_to_grid_binomial_data(tick_data,grid_sizing,ladder_function,ladder_depth)
     indicator_data = []
     if indicator:
-        indicator_data = indicator_prep(grid_jumps,grid_sizing,lookback=lookback)
+        indicator_data = indicator_prep(grid_jumps,grid_sizing,lookback=lookback,Type=indicator_type,indicator_scale=indicator_scale)
 
     T = len(binomial_data)
     
@@ -670,7 +689,7 @@ def run_strategy_optimised(tick_data,grid_sizing,lot_sizing,ladder_depth = 10,la
     U_PNL = 0
     PNL = 0
     position = 0
-    position_sizing = build_lot_sizing(lot_sizing,binomial_data,multiplier=multiplier,indicator_data=indicator_data)
+    position_sizing = build_lot_sizing(lot_sizing,binomial_data,multiplier=multiplier,indicator_data=indicator_data,stationary_reference=stationary_reference)
     avg_price = 0
     max_position = 0
     min_U_PNL = 0
@@ -703,6 +722,6 @@ def run_strategy_optimised(tick_data,grid_sizing,lot_sizing,ladder_depth = 10,la
             max_position = abs(position)
         if PNL < max_loss:
             max_loss = PNL
-    return max_loss, min_U_PNL, max_position, R_PNL
+    return max_loss, min_U_PNL, max_position, R_PNL , PNL
 
 # ****************************************************************************************************************
