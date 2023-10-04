@@ -19,7 +19,6 @@ from numba import jit
 # ****************************************************************************************************************
 # Data Gathering Functions
 
-
 def get_tick_data(start_date,finish_date):
     """
     Fetch tick data for a given date range.
@@ -437,77 +436,149 @@ def convert_to_grid_binomial_data(tick_data,grid_size,ladderized_function,ladder
     binomial_data = apply_depth_constraint(binomial_data,ladder_depth)
     return jumps,binomial_data
 
-@jit(nopython=True)
-def loop_to_scale_lots(binomial_data,positions,lot_sizing,multiplier):
-    for i in range(1,len(binomial_data)):
-        if (binomial_data[i] == 1 and binomial_data[i-1] == 1) or (binomial_data[i] == -1 and binomial_data[i-1] == -1): # checks if its a consecutive order in the same direction
-            positions[i] = positions[i-1]*multiplier
+def loop_to_scale_lots(binomial_data, positions, lot_sizing, multiplier, indicator_data):
+    """
+    Helper function to scale lot sizes based on market direction and binomial steps.
+
+    Parameters:
+    - binomial_data (array): Binomial representation of market moves (1 for upward, -1 for downward).
+    - positions (array): The current state of positions.
+    - lot_sizing (float): Initial lot size.
+    - multiplier (float): Factor to increase the lot size when market direction is opposite to binomial step.
+    - indicator_data (array): Data indicating market direction.
+
+    Returns:
+    - array: Updated lot sizes based on binomial and market direction.
+    """
+    for i in range(1, len(binomial_data)):
+        if indicator_data[i] * binomial_data[i] < 0:  # Opposite direction
+            positions[i] = positions[i-1] * multiplier
         else:
             positions[i] = lot_sizing
     return positions
 
-
-def build_lot_sizing(lot_sizing,binomial_data,multiplier=1,indicator_data=[],min_lot_size = 10000,stationary_reference = False):
+def build_lot_sizing(lot_sizing, binomial_data, multiplier=1, indicator_data=[], just_direction=True, min_lot_size=10000):
     """
-    Compute the lot sizing for trading based on binomial data and optional indicator data.
+    Compute the lot sizing for trading based on binomial data and an optional market indicator.
 
     Parameters:
-    - lot_sizing (float): Base lot size for trading.
-    - binomial_data (pd.Series or np.array): Binomial representation of tick data, where 1 indicates an upward move, -1 indicates a downward move.
-    - multiplier (float, optional): Multiplier for scaling the lot size. Default is 1.
-    - indicator_data (list or np.array, optional): Additional data used for scaling the lot size based on the direction of the binomial data. Default is an empty list.
+    - lot_sizing (float): Base lot size.
+    - binomial_data (array): Binomial representation of tick data (1 for upward, -1 for downward).
+    - multiplier (float, optional): Scaling factor for lot size. Default is 1.
+    - indicator_data (array, optional): Market direction data for lot scaling. Default is an empty list.
+    - just_direction (bool, optional): If True, only considers the market direction for scaling. Default is True.
+    - min_lot_size (int, optional): Minimum permissible lot size. Default is 10000.
 
     Returns:
-    - np.array: Array of lot sizes for each time step.
-
-    Notes:
-    If no indicator data is provided, the function returns a list of lot sizes scaled by the multiplier for each time step.
-    If indicator data is provided, the function scales the lot size based on the alignment of the binomial data and the indicator data. Specifically, if both the binomial data and the indicator data have the same sign (indicating movement in the same direction), the lot size is inversely scaled. Otherwise, it is scaled up.
-
-    Example:
-    Given lot_sizing as 10, binomial_data as [1, -1, 1], multiplier as 2, and indicator_data as [1, -1, 1]:
-    The resulting lot sizes would be [10, 20, 5] (assuming rounding for simplicity).
+    - array: Scaled lot sizes for each time step.
     """
     T = len(binomial_data)
-    if len(indicator_data) == 0: # No indicator data
-        if stationary_reference:
-            binomial_depth = np.cumsum(binomial_data)
-            mask = mask = ((binomial_depth > 0) & (binomial_data == 1)) | ((binomial_depth < 0) & (binomial_data == -1))
-            positions = np.ones(T)*lot_sizing
-            positions[mask] *= multiplier**(abs(binomial_depth[mask])-1)
-        else:
-            positions = np.zeros(T,dtype=np.int64)
-            binomial_data = np.array(binomial_data,dtype=np.int64)
-            positions = loop_to_scale_lots(binomial_data,positions,lot_sizing,multiplier) # refer to function for details on how it works
+    if len(indicator_data)==0:
+        return np.ones(T)*lot_sizing
+
+    if just_direction:  # Use only market direction for scaling
+        positions = np.zeros(T, dtype=np.int64)
+        binomial_data = np.array(binomial_data, dtype=np.int64)
+        positions = loop_to_scale_lots(binomial_data, positions, lot_sizing, multiplier, indicator_data)
         return positions
-    else: # Indicator data is present
-        scaling_criteria =  binomial_data * indicator_data  # +ve if both are same sign hence signifies movement in same direction , we do not scale in that case
-        #positions = np.where(scaling_criteria > 0,1/(1+abs(scaling_criteria)),1+abs(scaling_criteria))*lot_sizing # +ve if both are same sign hence signifies movement in same direction, we scale in by inverse
-        positions = np.where(scaling_criteria > 0,1,1+abs(scaling_criteria))*lot_sizing
+
+    else:  # Consider other indicators for scaling
+        scaling_criteria = binomial_data * indicator_data  # Positive if movement is in the same direction
+        positions = np.where(scaling_criteria > 0, 1, 1 + abs(scaling_criteria)) * lot_sizing
         positions[np.isnan(positions)] = 0
-        return np.round(positions/min_lot_size,0)*min_lot_size
+        return np.round(positions/min_lot_size, 0) * min_lot_size
+
 
 # ****************************************************************************************************************
 
 # Indicator Preparation Functions
 
-def velocity(data,grid_sizing,indicator_scale=5):
-    return np.round(indicator_scale*data.diff()/(data)/grid_sizing,1)
+import numpy as np
 
-def acceleration(data,grid_sizing,indicator_scale=5):
-    return np.round(indicator_scale*data.diff().diff()/(data)/grid_sizing,1)
+def velocity(data, grid_sizing, indicator_scale=5):
+    """
+    Compute the velocity of a time series.
+    
+    Parameters:
+    - data (Series): The input time series data.
+    - grid_sizing (float): Grid size to normalize the difference.
+    - indicator_scale (float, optional): A scale factor. Default is 5.
+    
+    Returns:
+    - Series: Scaled velocity of the time series.
+    """
+    return np.round(indicator_scale * data.diff() / data / grid_sizing, 1)
 
-def indicator_prep(data,grid_sizing,lookback = 200,Type = 'v',indicator_scale=5):
+def acceleration(data, grid_sizing, indicator_scale=5):
+    """
+    Compute the acceleration of a time series.
+    
+    Parameters:
+    - data (Series): The input time series data.
+    - grid_sizing (float): Grid size to normalize the difference.
+    - indicator_scale (float, optional): A scale factor. Default is 5.
+    
+    Returns:
+    - Series: Scaled acceleration of the time series.
+    """
+    return np.round(indicator_scale * data.diff().diff() / data / grid_sizing, 1)
+
+def direction(data):
+    """
+    Compute the direction of a time series.
+    
+    Parameters:
+    - data (Series): The input time series data.
+    
+    Returns:
+    - Series: Direction of the time series. Values are -1, 0, or 1.
+    """
+    return np.sign(data.diff())
+
+def indicator_prep(data, grid_sizing, lookback=200, Type='d', indicator_scale=5):
+    """
+    Prepare the indicator for a time series based on type ('a' for acceleration, 'v' for velocity, or 'd' for direction).
+    
+    Parameters:
+    - data (Series): The input time series data.
+    - grid_sizing (float): Grid size to normalize the difference.
+    - lookback (int, optional): Number of periods for the exponential moving average. Default is 200.
+    - Type (str, optional): Type of the indicator ('a', 'v', or 'd'). Default is 'd'.
+    - indicator_scale (float, optional): A scale factor. Default is 5.
+    
+    Returns:
+    - Series: The prepared indicator.
+    """
+    # Exponential moving average calculation
+    ema_data = data.ewm(span=lookback).mean()
+    
     if Type == 'a':
-        data = acceleration(data.ewm(span=lookback).mean(),grid_sizing,indicator_scale).shift(1)
+        data = acceleration(ema_data, grid_sizing, indicator_scale).shift(1)
     elif Type == 'v':
-        data = velocity(data.ewm(span=lookback).mean(),grid_sizing,indicator_scale).shift(1) # we shift this because our lot sizing will be decided by what the values are prior not current
+        data = velocity(ema_data, grid_sizing, indicator_scale).shift(1) 
     else:
-        print('wrong Indicator type')
-        return None
+        data = direction(ema_data).shift(1)
+    
+    # Fill NaN values with 0
     data[np.isnan(data)] = 0
     return data
 
+
+# Plot the results
+def plot_indicator_graph(jumps,grid_size,lookback=10):
+    jump_ema = jumps.ewm(span=lookback).mean()
+    fig,axs = plt.subplots(4,1,figsize=(15,15))
+    axs[0].plot(jumps.values, label='jumps', linestyle='--')
+    axs[0].plot(jump_ema.values, label='ema_jumps', linestyle='-')
+    #axs[0].plot(ladderized_data, label='Ladderized Data',alpha=0.5)
+    axs[0].legend()
+    axs[1].plot(direction(jump_ema).values, label='ema_direction')
+    axs[1].legend()
+    axs[2].plot(velocity(jump_ema,grid_size).values, label='ema_velocity')
+    axs[2].legend()
+    axs[3].plot(acceleration(jump_ema,grid_size).values, label='ema_acceleration')
+    axs[3].legend()
+    plt.show()
 # ****************************************************************************************************************
 # ****************************************************************************************************************
 
@@ -582,37 +653,71 @@ def format_df(df):
     
     return formatted_df
 
-def run_strategy_eval(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_function=ladderize_absolute_optimised,multiplier=1,stationary_reference=False,indicator = False,indicator_type='v',indicator_scale=5,lookback = 200,print_trade_book=False,trade_plot=False):
+def run_strategy_eval(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
+                      ladder_function=ladderize_absolute_optimised, multiplier=1,
+                      indicator_type='d', indicator_scale=5, lookback=200,
+                      print_trade_book=False, trade_plot=False):
     """
-    Evaluate and visualize a trading strategy based on ladderized tick data and optional indicators.
-
+    Evaluate a trading strategy based on ladderized tick data and optional indicators.
+    
     Parameters:
-    - tick_data (pd.Series or np.array): The raw tick data to be processed.
-    - grid_sizing (float): The size of the grid to which the tick data will be mapped.
-    - lot_sizing (float): Base lot size for trading.
-    - ladder_function (callable, optional): A function that ladderizes the tick data based on the grid size. Default is ladderize_absolute.
-    - multiplier (float, optional): Multiplier for scaling the lot size. Default is 1.
-    - indicator (bool, optional): Flag to determine if an indicator should be used. Default is False.
-    - lookback (int, optional): Lookback period for the indicator. Default is 200.
-    - print_trade_book (bool, optional): Flag to print trade details for each time step. Default is False.
-    - trade_plot (bool, optional): Flag to plot the trading data. Default is False.
-
-    Returns:
-    - pd.DataFrame: A dataframe containing trade details for each time step, including price, lots, position, realized and unrealized PNL, and average price.
-
-    Notes:
-    The function evaluates a trading strategy based on ladderized tick data and optional indicators. It computes the realized and unrealized PNL, position, and average price for each time step. The function can also print trade details for each time step and plot the trading data.
-
-    The strategy is evaluated by first converting the tick data to a binomial grid representation using the provided ladder function. If an indicator is used, it is prepared based on the grid jumps and grid sizing. The position sizing is then computed based on the binomial data, lot sizing, multiplier, and optional indicator data.
-
-    The function then iterates over each time step, computing the number of lots in order, position, realized and unrealized PNL, and average price. The results are stored in a dataframe, which is returned.
-
-    """
-    grid_jumps,binomial_data = convert_to_grid_binomial_data(tick_data,grid_sizing,ladder_function,ladder_depth)
-    indicator_data = []
-    if indicator:
-        indicator_data = indicator_prep(grid_jumps,grid_sizing,lookback=lookback,Type=indicator_type,indicator_scale=indicator_scale)
+    ----------
+    tick_data : pd.Series or np.array
+        Raw tick data to be processed.
+    
+    grid_sizing : float
+        Size of the grid to map the tick data.
         
+    lot_sizing : float
+        Base lot size for trading.
+    
+    ladder_depth : int, optional
+        Depth of the ladder. Default is 10.
+    
+    ladder_function : callable, optional
+        Function to ladderize the tick data based on the grid size.
+        Default is ladderize_absolute_optimised.
+        
+    multiplier : float, optional
+        Multiplier to scale the lot size. Default is 1.
+        
+    indicator_type : str, optional
+        Type of the indicator to use. Default is 'd'.
+        
+    indicator_scale : int, optional
+        Scale for the indicator. Default is 5.
+    
+    lookback : int, optional
+        Lookback period for the indicator. Default is 200.
+        
+    print_trade_book : bool, optional
+        Flag to print trade details for each time step. Default is False.
+        
+    trade_plot : bool, optional
+        Flag to plot the trading data. Default is False.
+    
+    Returns:
+    -------
+    tuple
+        Returns tuple containing realized and unrealized PNL, position, 
+        and average price for each time step.
+    
+    Notes:
+    -----
+    The strategy computes PNL, position, and average price based on ladderized tick data and 
+    optional indicators. Results can be visualized via trade book prints and plots.
+    """
+    
+    # Initialize time benchmarks for performance evaluation
+    time1 = time.time()
+    
+    # Convert tick data to a binomial grid representation
+    grid_jumps, binomial_data = convert_to_grid_binomial_data(tick_data, grid_sizing, ladder_function, ladder_depth)
+    time2 = time.time()
+    
+    # Prepare indicator data based on grid jumps and grid sizing
+    indicator_data = indicator_prep(grid_jumps, grid_sizing, lookback=lookback, Type=indicator_type, indicator_scale=indicator_scale)
+    time3 = time.time()
 
     T = len(binomial_data)
     PNL = np.zeros(T)
@@ -620,41 +725,58 @@ def run_strategy_eval(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_fu
     U_PNL = np.zeros(T)
     P = np.zeros(T)
     N = np.zeros(T)
-    trades = pd.DataFrame(columns=['t','price','Previous_lots','current_lots','position','R_PNL','U_PNL','PNL'])
+    trades = pd.DataFrame({})
     
-    position_sizing = build_lot_sizing(lot_sizing,binomial_data,multiplier=multiplier,indicator_data=indicator_data,stationary_reference=stationary_reference)
+    if indicator_type == 'd':
+        direction = True
+    direction = False
+    position_sizing = build_lot_sizing(lot_sizing,binomial_data,multiplier=multiplier,indicator_data=indicator_data,just_direction=direction)
+    time4=time.time()
     avg_price = 0
     for t in np.arange(0,T):
         lots_in_order = - position_sizing[t] * binomial_data[t]
         N[t] = N[t-1] + lots_in_order
         P[t] = N[t] * grid_jumps[t] 
-
-        if (N[t]*lots_in_order <= 0) and (lots_in_order != 0):# if we are closing a position 
-        # we check if the final position and the order are in opposite directions and if the order is not 0 (i.e. we are not opening a position)
-        # ----- need to improve condition when we have lot size scaling. (lets say we are - ve 10 and we buy 20 we have realised PNL only for the first 10)
-            R_PNL[t] = R_PNL[t-1] - (grid_jumps[t] - avg_price) * lots_in_order # realised PNL
+        
+        # we have 2 different situation to consider:
+        # we close existing positions
+        if ((N[t-1]<0) and (N[t]>N[t-1])) or ((N[t-1]>0) and (N[t]<N[t-1])): # if we are closing a position in short and long direction
+            if N[t-1]*N[t] < 0: # if we are looking at the order being partially filled
+                R_PNL[t] = R_PNL[t-1] + (grid_jumps[t] - avg_price) * (N[t-1]) # realised PNL
+                # update avg price based on partially opened orders 
+                avg_price = grid_jumps[t]
+            else:
+                R_PNL[t] = R_PNL[t-1] - (grid_jumps[t] - avg_price) * lots_in_order # realised PNL
+        # else if we are only adding to our positions 
         else: # if we are opening a position or adding to an existing position
             R_PNL[t] = R_PNL[t-1] # realised PNL remains the same
-            if N[t]!=0: # since we are adding to an existing position we need to update the avg price
+            # since we are adding to an existing position we need to update the avg price
+            if N[t]!=0: # to avoid divide by zero error
                 avg_price = (avg_price * N[t-1] + grid_jumps[t]*lots_in_order)/N[t] # update avg price
             # if N[t] == 0 we are closing a position and hence avg price is not updated
 
+        U_PNL[t] = (grid_jumps[t] - avg_price) * N[t] # unrealised PNL
         PNL[t] = PNL[t-1] + N[t-1] * (grid_jumps[t] - grid_jumps[t-1])
         
-        U_PNL[t] = (grid_jumps[t] - avg_price) * N[t] # unrealised PNL
-        
+        # if unrealised PNL is less than -150k we close all positions and reset
+        if U_PNL[t] < -150e3:
+            print('closing all positions at t = {}'.format(t))
+            R_PNL[t] = R_PNL[t] - 150e3
+            U_PNL[t] = 0
+            PNL[t] = R_PNL[t]
+            avg_price = 0
+            N[t] = 0
+
         PNL[t]=np.round(PNL[t],4)
         U_PNL[t]=np.round(U_PNL[t],4)
         R_PNL[t]=np.round(R_PNL[t],4)
         
         
         # checks if profit calculations are right
-        test = True  # set to true to test
         error = np.round(PNL[t] - R_PNL[t] - U_PNL[t],2) # total profit must be equal to cumulative sum of realised + unrealised profit
-        if (error!=0) and test:
+        if (error!=0):
             print('error at t = {}, error = {}'.format(t,error))
 
-        
         if print_trade_book:
             print('At t = {}'.format(t))
             if t == 0:
@@ -667,19 +789,63 @@ def run_strategy_eval(tick_data,grid_sizing,lot_sizing,ladder_depth=10,ladder_fu
             print('cummulative realised PNL = {}'.format(R_PNL[t]))
             print('unrealised PNL = {}'.format(U_PNL[t]))
             print('PNL = {}'.format(PNL[t]))
-        trade = pd.Series({'t':t,'price':grid_jumps[t],'Previous_lots':N[t-1],'current_lots':N[t],'position':P[t],'R_PNL':R_PNL[t],'U_PNL':U_PNL[t],'PNL':PNL[t],'average_price':avg_price})
-        trades = pd.concat([trades, trade.to_frame().T])
+        trade = pd.Series({'t':t,'price':grid_jumps[t],'lots_in_order':lots_in_order,'Previous_lots':N[t-1],'current_lots':N[t],'position':P[t],'R_PNL':R_PNL[t],'U_PNL':U_PNL[t],'PNL':PNL[t],'average_price':avg_price})
+        trades = pd.concat([trades, trade.to_frame().T],ignore_index=True)
+    time5 = time.time()
+    
+    # Print benchmarking results
+    print('Ladderization time:', time2 - time1)
+    print('Indicator preparation time:', time3 - time2)
+    print('Position sizing time:', time4 - time3)
+    print('PNL calculation time:', time5 - time4)
+    
+    # Plot trade details if required
     if trade_plot:
-        plot_trades(grid_jumps,R_PNL,U_PNL,N,lookback=lookback)
-        print(format_df(trades))
-    return PNL,R_PNL,U_PNL,N,P
+        plot_trades(grid_jumps, R_PNL, U_PNL, N, lookback=lookback)
+    
+    return PNL, R_PNL, U_PNL, N, P, format_df(trades)
 
-def run_strategy_optimised(tick_data,grid_sizing,lot_sizing,ladder_depth = 10,ladder_function=ladderize_absolute_optimised,multiplier=1,stationary_reference=False,indicator = False,indicator_type='v',indicator_scale=5,lookback = 200):
+def run_strategy_optimised(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
+                           ladder_function=ladderize_absolute_optimised, multiplier=1,
+                           indicator_type='d', indicator_scale=5, lookback=200):
+    """
+    Execute a quant trading strategy using provided tick data and parameters.
 
+    Parameters:
+    - tick_data : DataFrame
+        The historical price data on which the strategy will be executed.
+    - grid_sizing : int
+        Size of the grid to use in strategy.
+    - lot_sizing : float
+        Number of lots to trade in strategy.
+    - ladder_depth : int, optional
+        Depth of ladder to use in strategy, default is 10.
+    - ladder_function : function, optional
+        Function to ladderize data, default is ladderize_absolute_optimised.
+    - multiplier : int, optional
+        Multiplier to adjust lot sizing, default is 1.
+    - indicator_type : str, optional
+        Type of indicator to use ('d' or other), default is 'd'.
+    - indicator_scale : int, optional
+        Scale of the indicator, default is 5.
+    - lookback : int, optional
+        Lookback period for the strategy, default is 200.
+
+    Returns:
+    - max_loss : float
+        Maximum loss incurred during strategy execution.
+    - min_U_PNL : float
+        Minimum unrealised PNL during strategy execution.
+    - max_position : int
+        Maximum position size during strategy execution.
+    - R_PNL : float
+        Realised PNL at the end of the strategy.
+    - PNL : float
+        Total PNL at the end of the strategy.
+    """
+    
     grid_jumps,binomial_data = convert_to_grid_binomial_data(tick_data,grid_sizing,ladder_function,ladder_depth)
-    indicator_data = []
-    if indicator:
-        indicator_data = indicator_prep(grid_jumps,grid_sizing,lookback=lookback,Type=indicator_type,indicator_scale=indicator_scale)
+    indicator_data = indicator_prep(grid_jumps,grid_sizing,lookback=lookback,Type=indicator_type,indicator_scale=indicator_scale)
 
     T = len(binomial_data)
     
@@ -689,29 +855,49 @@ def run_strategy_optimised(tick_data,grid_sizing,lot_sizing,ladder_depth = 10,la
     U_PNL = 0
     PNL = 0
     position = 0
-    position_sizing = build_lot_sizing(lot_sizing,binomial_data,multiplier=multiplier,indicator_data=indicator_data,stationary_reference=stationary_reference)
+    
+    if indicator_type == 'd':
+        direction = True
+    direction = False
+    position_sizing = build_lot_sizing(lot_sizing,binomial_data,multiplier=multiplier,indicator_data=indicator_data,just_direction=direction)
+    
     avg_price = 0
     max_position = 0
     min_U_PNL = 0
     max_loss = 0
+    
     for t in np.arange(0,T):
         lots_in_order = - position_sizing[t] * binomial_data[t]
         previous_lots = current_lots
         current_lots = previous_lots + lots_in_order
         position = current_lots * grid_jumps[t] 
 
-        if (current_lots*lots_in_order <= 0) and (lots_in_order != 0):# if we are closing a position 
-        # we check if the final position and the order are in opposite directions and if the order is not 0 (i.e. we are not opening a position)
-        # ----- need to improve condition when we have lot size scaling. (lets say we are - ve 10 and we buy 20 we have realised PNL only for the first 10)
-            R_PNL -= (grid_jumps[t] - avg_price) * lots_in_order # realised PNL
+        # we have 2 different situation to consider:
+        # we close existing positions
+        if ((previous_lots<0) and (current_lots>previous_lots)) or ((previous_lots>0) and (current_lots<previous_lots)): # if we are closing a position in short and long direction
+            if previous_lots*current_lots < 0: # if we are looking at the order being partially filled
+                R_PNL += (grid_jumps[t] - avg_price) * (previous_lots) # realised PNL
+                # update avg price based on partially opened orders 
+                avg_price = grid_jumps[t]
+            else:
+                R_PNL -= (grid_jumps[t] - avg_price) * lots_in_order # realised PNL
+        # else if we are only adding to our positions 
         else: # if we are opening a position or adding to an existing position
-            if current_lots!=0: # since we are adding to an existing position we need to update the avg price
+            if current_lots!=0: # to avoid divide by zero error
                 avg_price = (avg_price * previous_lots + grid_jumps[t]*lots_in_order)/current_lots # update avg price
             # if N[t] == 0 we are closing a position and hence avg price is not updated
 
         PNL = PNL + previous_lots * (grid_jumps[t] - grid_jumps[t-1])
         
         U_PNL = (grid_jumps[t] - avg_price) * current_lots # unrealised PNL
+
+        # if unrealised PNL is less than -150k we close all positions and reset
+        if U_PNL < -150e3:
+            R_PNL = R_PNL - 150e3
+            U_PNL = 0
+            PNL = R_PNL
+            avg_price = 0
+            current_lots = 0
 
         PNL=np.round(PNL,4)
         U_PNL=np.round(U_PNL,4)
@@ -722,6 +908,12 @@ def run_strategy_optimised(tick_data,grid_sizing,lot_sizing,ladder_depth = 10,la
             max_position = abs(position)
         if PNL < max_loss:
             max_loss = PNL
+            
     return max_loss, min_U_PNL, max_position, R_PNL , PNL
 
+
 # ****************************************************************************************************************
+# ****************************************************************************************************************
+
+# strategy optimization functions
+
