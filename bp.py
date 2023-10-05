@@ -727,9 +727,10 @@ def run_strategy_eval(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
     N = np.zeros(T)
     trades = pd.DataFrame({})
     
+    direction = False
     if indicator_type == 'd':
         direction = True
-    direction = False
+        
     position_sizing = build_lot_sizing(lot_sizing,binomial_data,multiplier=multiplier,indicator_data=indicator_data,just_direction=direction)
     time4=time.time()
     avg_price = 0
@@ -855,10 +856,12 @@ def run_strategy_optimised(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
     U_PNL = 0
     PNL = 0
     position = 0
+
     
+    direction = False
     if indicator_type == 'd':
         direction = True
-    direction = False
+        
     position_sizing = build_lot_sizing(lot_sizing,binomial_data,multiplier=multiplier,indicator_data=indicator_data,just_direction=direction)
     
     avg_price = 0
@@ -917,3 +920,12 @@ def run_strategy_optimised(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
 
 # strategy optimization functions
 
+def strategy_evaluation(params):
+    tick_data, ladder_size, lot_size, ladder_depth = params
+    
+    max_loss, min_U_PNL, max_position, R_PNL, profit = run_strategy_optimised(tick_data, ladder_size, lot_size, ladder_depth=ladder_depth)
+    
+    if (min_U_PNL > -150000) and (max_position < 10000000) and (max_loss > -500000):
+        return profit, ladder_size, lot_size, ladder_depth
+    else:
+        return -np.inf, None, None, None
