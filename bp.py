@@ -919,13 +919,3 @@ def run_strategy_optimised(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
 # ****************************************************************************************************************
 
 # strategy optimization functions
-
-def strategy_evaluation(params):
-    tick_data, ladder_size, lot_size, ladder_depth = params
-    
-    max_loss, min_U_PNL, max_position, R_PNL, profit = run_strategy_optimised(tick_data, ladder_size, lot_size, ladder_depth=ladder_depth)
-    
-    if (min_U_PNL > -150000) and (max_position < 10000000) and (max_loss > -500000):
-        return profit, ladder_size, lot_size, ladder_depth
-    else:
-        return -np.inf, None, None, None
