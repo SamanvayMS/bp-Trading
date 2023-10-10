@@ -388,23 +388,9 @@ def plot_jumps(ladderized_data):
 
 # ****************************************************************************************************************
 
-# Convert to Binomial data and apply Depth constraint
+# Convert to Binomial data
 
-def apply_depth_constraint(data, depth=10):
-    sum = 0
-    for i,point in enumerate(data):
-        sum = sum + point
-        if (sum > depth) and (point > 0):
-            data[i] = 0
-            sum = sum - point
-        elif (sum < -depth) and (point < 0):
-            data[i] = 0
-            sum = sum - point
-        else:
-            continue
-    return data
-
-def convert_to_grid_binomial_data(tick_data,grid_size,ladderized_function,ladder_depth=10):
+def convert_to_grid_binomial_data(tick_data,grid_size,ladderized_function):
     """
     Convert tick data to a binomial grid representation using a ladderized function.
 
@@ -433,7 +419,6 @@ def convert_to_grid_binomial_data(tick_data,grid_size,ladderized_function,ladder
     binomial_data = jumps.diff()
     binomial_data[1:] = np.where(binomial_data[1:] > 0,1,-1) # 1 for up and -1 for down
     binomial_data[0] = 0 # first value is always 0
-    binomial_data = apply_depth_constraint(binomial_data,ladder_depth)
     return jumps,binomial_data
 
 def loop_to_scale_lots(binomial_data, positions, lot_sizing, multiplier, indicator_data):
@@ -473,20 +458,19 @@ def build_lot_sizing(lot_sizing, binomial_data, multiplier=1, indicator_data=[],
     - array: Scaled lot sizes for each time step.
     """
     T = len(binomial_data)
-    if len(indicator_data)==0:
+    if len(indicator_data) == 0:
         return np.ones(T)*lot_sizing
-
-    if just_direction:  # Use only market direction for scaling
-        positions = np.zeros(T, dtype=np.int64)
-        binomial_data = np.array(binomial_data, dtype=np.int64)
-        positions = loop_to_scale_lots(binomial_data, positions, lot_sizing, multiplier, indicator_data)
+    if just_direction: # Only directional data is present
+        positions = np.zeros(T,dtype=np.int64)
+        binomial_data = np.array(binomial_data,dtype=np.int64)
+        positions = loop_to_scale_lots(binomial_data,positions,lot_sizing,multiplier,indicator_data) # refer to function for details on how it works
         return positions
-
-    else:  # Consider other indicators for scaling
-        scaling_criteria = binomial_data * indicator_data  # Positive if movement is in the same direction
-        positions = np.where(scaling_criteria > 0, 1, 1 + abs(scaling_criteria)) * lot_sizing
+    else: # other indicators are present
+        scaling_criteria =  binomial_data * indicator_data  # +ve if both are same sign hence signifies movement in same direction , we do not scale in that case
+        #positions = np.where(scaling_criteria > 0,1/(1+abs(scaling_criteria)),1+abs(scaling_criteria))*lot_sizing # +ve if both are same sign hence signifies movement in same direction, we scale in by inverse
+        positions = np.where(scaling_criteria > 0,1,1+abs(scaling_criteria))*lot_sizing
         positions[np.isnan(positions)] = 0
-        return np.round(positions/min_lot_size, 0) * min_lot_size
+        return np.round(positions/min_lot_size,0)*min_lot_size
 
 
 # ****************************************************************************************************************
@@ -653,7 +637,7 @@ def format_df(df):
     
     return formatted_df
 
-def run_strategy_eval(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
+def run_strategy_eval(tick_data, grid_sizing, lot_sizing,
                       ladder_function=ladderize_absolute_optimised, multiplier=1,
                       indicator_type='d', indicator_scale=5, lookback=200,
                       print_trade_book=False, trade_plot=False):
@@ -670,9 +654,6 @@ def run_strategy_eval(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
         
     lot_sizing : float
         Base lot size for trading.
-    
-    ladder_depth : int, optional
-        Depth of the ladder. Default is 10.
     
     ladder_function : callable, optional
         Function to ladderize the tick data based on the grid size.
@@ -710,13 +691,9 @@ def run_strategy_eval(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
     
     # Initialize time benchmarks for performance evaluation
     time1 = time.time()
-    
-    # Convert tick data to a binomial grid representation
-    grid_jumps, binomial_data = convert_to_grid_binomial_data(tick_data, grid_sizing, ladder_function, ladder_depth)
+    grid_jumps,binomial_data = convert_to_grid_binomial_data(tick_data,grid_sizing,ladder_function)
     time2 = time.time()
-    
-    # Prepare indicator data based on grid jumps and grid sizing
-    indicator_data = indicator_prep(grid_jumps, grid_sizing, lookback=lookback, Type=indicator_type, indicator_scale=indicator_scale)
+    indicator_data = indicator_prep(grid_jumps,grid_sizing,lookback=lookback,Type=indicator_type,indicator_scale=indicator_scale)
     time3 = time.time()
 
     T = len(binomial_data)
@@ -737,7 +714,15 @@ def run_strategy_eval(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
     for t in np.arange(0,T):
         lots_in_order = - position_sizing[t] * binomial_data[t]
         N[t] = N[t-1] + lots_in_order
-        P[t] = N[t] * grid_jumps[t] 
+        P[t] = P[t-1] + lots_in_order * grid_jumps[t] # cash spent
+        
+        # check if max_position will get breached with the trade- calculated well before the trade is executed
+        if (np.abs(P[t]) >= 10e6):
+            print('position limit breached at {},'.format(t))
+            print('position rest to P[t-1] = {}'.format(P[t-1]))
+            lots_in_order = 0
+            N[t] = N[t-1]
+            P[t] = P[t-1]
         
         # we have 2 different situation to consider:
         # we close existing positions
@@ -767,6 +752,7 @@ def run_strategy_eval(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
             PNL[t] = R_PNL[t]
             avg_price = 0
             N[t] = 0
+            P[t] = 0
 
         PNL[t]=np.round(PNL[t],4)
         U_PNL[t]=np.round(U_PNL[t],4)
@@ -806,7 +792,7 @@ def run_strategy_eval(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
     
     return PNL, R_PNL, U_PNL, N, P, format_df(trades)
 
-def run_strategy_optimised(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
+def run_strategy_optimised(tick_data, grid_sizing, lot_sizing,
                            ladder_function=ladderize_absolute_optimised, multiplier=1,
                            indicator_type='d', indicator_scale=5, lookback=200):
     """
@@ -819,8 +805,6 @@ def run_strategy_optimised(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
         Size of the grid to use in strategy.
     - lot_sizing : float
         Number of lots to trade in strategy.
-    - ladder_depth : int, optional
-        Depth of ladder to use in strategy, default is 10.
     - ladder_function : function, optional
         Function to ladderize data, default is ladderize_absolute_optimised.
     - multiplier : int, optional
@@ -845,7 +829,7 @@ def run_strategy_optimised(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
         Total PNL at the end of the strategy.
     """
     
-    grid_jumps,binomial_data = convert_to_grid_binomial_data(tick_data,grid_sizing,ladder_function,ladder_depth)
+    grid_jumps,binomial_data = convert_to_grid_binomial_data(tick_data,grid_sizing,ladder_function)
     indicator_data = indicator_prep(grid_jumps,grid_sizing,lookback=lookback,Type=indicator_type,indicator_scale=indicator_scale)
 
     T = len(binomial_data)
@@ -855,13 +839,13 @@ def run_strategy_optimised(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
     R_PNL = 0
     U_PNL = 0
     PNL = 0
-    position = 0
-
+    current_position = 0
+    previous_position = 0
     
     direction = False
     if indicator_type == 'd':
         direction = True
-        
+
     position_sizing = build_lot_sizing(lot_sizing,binomial_data,multiplier=multiplier,indicator_data=indicator_data,just_direction=direction)
     
     avg_price = 0
@@ -872,8 +856,15 @@ def run_strategy_optimised(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
     for t in np.arange(0,T):
         lots_in_order = - position_sizing[t] * binomial_data[t]
         previous_lots = current_lots
+        previous_position = current_position
         current_lots = previous_lots + lots_in_order
-        position = current_lots * grid_jumps[t] 
+        current_position = previous_position + lots_in_order * grid_jumps[t] # cash spent
+        
+        # check if max_position will get breached with the trade- calculated well before the trade is executed
+        if (np.abs(current_position)) >= 10e6:
+            lots_in_order = 0
+            current_lots = previous_lots
+            current_position = previous_position
 
         # we have 2 different situation to consider:
         # we close existing positions
@@ -901,18 +892,16 @@ def run_strategy_optimised(tick_data, grid_sizing, lot_sizing, ladder_depth=10,
             PNL = R_PNL
             avg_price = 0
             current_lots = 0
+            current_position = 0
 
         PNL=np.round(PNL,4)
         U_PNL=np.round(U_PNL,4)
         R_PNL=np.round(R_PNL,4)
-        if U_PNL < min_U_PNL:
-            min_U_PNL = U_PNL
-        if abs(position) > max_position:
-            max_position = abs(position)
+
         if PNL < max_loss:
             max_loss = PNL
             
-    return max_loss, min_U_PNL, max_position, R_PNL , PNL
+    return max_loss, R_PNL , PNL
 
 
 # ****************************************************************************************************************
