@@ -2,3 +2,4 @@ Data for Practicum 2/*
 *.pkl
 __pycache__/*
 *.__pycache__
+.gitignore
