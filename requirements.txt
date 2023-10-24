@@ -152,8 +152,11 @@ yarl==1.9.2
 yfinance==0.2.28
 zipp
 zope.interface==6.0
+<<<<<<< HEAD
 findatapy
 pandas
 datetime
 matplotlib
 mplfinance
+=======
+>>>>>>> 017a8a54120293bc70b40b5b139a0dcf827850d4
