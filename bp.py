@@ -1,9 +1,7 @@
 __author__ = "samanvayms"
 
-# modified from https://github.com/cuemacro/findatapy/blob/master/findatapy_examples/dukascopy_example.py 
-# Author for original - saeedamen
 """
-This module provides functionalities for fetching, processing, and visualizing tick data for trading purposes.
+base functions for Data Pulling, Preparation, Visualisation , EDA , Strategy Development and Evaluation
 """
 
 import pandas as pd
@@ -89,7 +87,7 @@ def get_candlestick_data(start_date,finish_date,timeframe: str):
     ohlc_df = tick_to_ohlc(tick_data, timeframe)
     return ohlc_df,tick_data
 
-def get_date_pairs(start_date_str,end_date_str,date_format):
+def get_date_pairs(start_date_str,end_date_str,date_format='%d %b %Y',interval = 1):
     # Parse the start and end dates
     start_date = datetime.strptime(start_date_str, date_format)
     end_date = datetime.strptime(end_date_str, date_format)
@@ -99,11 +97,11 @@ def get_date_pairs(start_date_str,end_date_str,date_format):
 
     # Increment by one month until we reach or surpass the end date
     current_date = start_date
-    next_date = current_date + relativedelta(months=1)
+    next_date = current_date + relativedelta(months=interval)
     while next_date <= end_date:
         interval_list.append((current_date.strftime(date_format), next_date.strftime(date_format)))
         current_date = next_date
-        next_date += relativedelta(months=1)
+        next_date += relativedelta(months=interval)
 
     # Add the remaining interval if there are extra days left
     if current_date != end_date:
@@ -619,23 +617,6 @@ def plot_trades(grid_jumps, R_PNL, U_PNL, N, lookback=200):
     axs[2].legend()
     axs[2].set_title('PNL')
     plt.show()
-    
-def format_df(df):
-    # Set the display option for floats
-    pd.options.display.float_format = '{:,.2f}'.format
-
-    # Format the DataFrame
-    formatted_df = df.style.format({
-        't': '{:,.0f}',  # Fixed the missing quotation mark here
-        'price': '{:,.3f}',
-        'Previous_lots': '{:,.0f}',
-        'current_lots': '{:,.0f}',  # Fixed the missing quotation mark here
-        'position': '{:,.2f}',
-        'Unrealised_PNL': '{:,.2f}',
-        'Realized_PNL': '{:,.2f}'
-    })
-    
-    return formatted_df
 
 def run_strategy_eval(tick_data, grid_sizing, lot_sizing,
                       ladder_function=ladderize_absolute_optimised, multiplier=1,
@@ -790,7 +771,7 @@ def run_strategy_eval(tick_data, grid_sizing, lot_sizing,
     if trade_plot:
         plot_trades(grid_jumps, R_PNL, U_PNL, N, lookback=lookback)
     
-    return PNL, R_PNL, U_PNL, N, P, format_df(trades)
+    return PNL, R_PNL, U_PNL, N, P, trades
 
 def run_strategy_optimised(tick_data, grid_sizing, lot_sizing,
                            ladder_function=ladderize_absolute_optimised, multiplier=1,
@@ -852,6 +833,8 @@ def run_strategy_optimised(tick_data, grid_sizing, lot_sizing,
     max_position = 0
     min_U_PNL = 0
     max_loss = 0
+    count = 0
+    std = 0
     
     for t in np.arange(0,T):
         lots_in_order = - position_sizing[t] * binomial_data[t]
@@ -900,8 +883,10 @@ def run_strategy_optimised(tick_data, grid_sizing, lot_sizing,
 
         if PNL < max_loss:
             max_loss = PNL
-            
-    return max_loss, R_PNL , PNL
+
+        std = np.sqrt((count*(std**2) + (U_PNL**2))/(count+1))
+        count = count + 1
+    return max_loss, R_PNL , PNL , std
 
 
 # ****************************************************************************************************************
