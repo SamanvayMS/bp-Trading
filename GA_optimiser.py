@@ -50,7 +50,7 @@ def get_previous_n_months(end_date_str, n_months):
     
     return date_range
 
-def walk_forward_analysis(evaluation_start, evaluation_end, evaluation_day,parameters,optimization_function = Grid_Search, optimizer_params =[],  lookback_in_months = 6,evaluation_period = 3):
+def walk_forward_analysis(evaluation_start, evaluation_end, evaluation_day,parameters,optimization_function = None, optimizer_params =[],  lookback_in_months = 6,evaluation_period = 3):
     generated_date_ranges = generate_date_ranges_for_walk_forward(evaluation_start, evaluation_end,evaluation_day,n_months = evaluation_period)
     df = {}
     for dates in generated_date_ranges:
@@ -380,7 +380,7 @@ def deap_optimiser_g_n_rollover(train_start,train_end,test_start,test_end,parame
         G, n = individual[0]*grid_params[2], individual[1]*position_params[2]
         profit = 0
         for pair in train_pairs:
-            train_data = data_gather_from_files(pair[0],pair[1])
+            train_data = data_gather_from_files(pair[0],pair[1])[EURUSD.mid]
             max_loss, R_PNL, month_profit, _ = run_strategy_optimised(train_data, G, n)
             constraints = [
                 max_loss < -500e3
@@ -520,7 +520,7 @@ def deap_optimiser_multiplier_rollover(train_start,train_end,test_start,test_end
         G, n, multiplier, lookback = individual[0]*grid_params[2], individual[1]*position_params[2], individual[2]*multiplier_params[2], individual[3]
         profit = 0
         for pair in train_pairs:
-            train_data = data_gather_from_files(pair[0],pair[1])
+            train_data = data_gather_from_files(pair[0],pair[1])['EURUSD.mid']
             max_loss, R_PNL, month_profit, _ = run_strategy_optimised(train_data, G, n, multiplier = multiplier,lookback = lookback)
             constraints = [
                 max_loss < -500e3

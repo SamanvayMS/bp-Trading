@@ -150,7 +150,7 @@ def year_order(start_date, end_date):
         return year_dict
     
 # extracts data from various files based on date range given and then returns it as a single dataframe
-def data_gather_from_files(start_date,end_date,file_path='Data for Practicum 2'):
+def data_gather_from_files(start_date,end_date,file_path='Data for Practicum 2'): # change this to explore other currency****
     year_dict = year_order(start_date,end_date)
     full_df = pd.DataFrame()
     for year in year_dict.keys():
