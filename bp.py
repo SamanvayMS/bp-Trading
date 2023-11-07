@@ -17,7 +17,7 @@ from numba import jit
 # ****************************************************************************************************************
 # Data Gathering Functions
 
-def get_tick_data(start_date,finish_date):
+def get_tick_data(start_date,finish_date,currency_pair='EURUSD'):
     """
     Fetch tick data for a given date range.
 
@@ -36,10 +36,10 @@ def get_tick_data(start_date,finish_date):
                                 vendor_fields=['bid', 'ask'],
                                 freq='tick', 
                                 data_source='dukascopy',
-                                tickers=['EURUSD'],
-                                vendor_tickers=['EURUSD'])
+                                tickers=[currency_pair],
+                                vendor_tickers=[currency_pair])
     df = market.fetch_market(md_request)
-    df['EURUSD.mid'] = (df['EURUSD.ask'] + df['EURUSD.bid']) / 2.0
+    df['mid'] = (df[currency_pair+'.ask'] + df[currency_pair+'.bid']) / 2.0
     
     return df
 
@@ -60,7 +60,7 @@ def tick_to_ohlc(tick_df: pd.DataFrame, timeframe: str,pickle_file_name_ohlc=Non
     # for the mid prices. Adapt as necessary.
 
     # Resample the tick data to OHLC data using the specified timeframe
-    ohlc_df = tick_df['EURUSD.mid'].resample(timeframe).ohlc()
+    ohlc_df = tick_df['mid'].resample(timeframe).ohlc()
     
     # Drop rows where all values are NaN (which may happen in less active trading periods)
     ohlc_df.dropna(how='all', inplace=True)
@@ -70,7 +70,7 @@ def tick_to_ohlc(tick_df: pd.DataFrame, timeframe: str,pickle_file_name_ohlc=Non
         ohlc_df.to_pickle(pickle_file_name_ohlc)
     return ohlc_df
 
-def get_candlestick_data(start_date,finish_date,timeframe: str):
+def get_candlestick_data(start_date,finish_date,timeframe: str,currency_pair='EURUSD'):
     """
     Fetch tick data and convert it to candlestick (OHLC) format.
 
@@ -83,7 +83,7 @@ def get_candlestick_data(start_date,finish_date,timeframe: str):
     - ohlc_df: DataFrame, OHLC data
     - tick_data: DataFrame, raw tick data
     """
-    tick_data = get_tick_data(start_date,finish_date)
+    tick_data = get_tick_data(start_date,finish_date,currency_pair)
     ohlc_df = tick_to_ohlc(tick_data, timeframe)
     return ohlc_df,tick_data
 
@@ -109,14 +109,14 @@ def get_date_pairs(start_date_str,end_date_str,date_format='%d %b %Y',interval =
         
     return interval_list
 
-def get_tick_data_optimised(start_date_str,end_date_str,pickle_file_name_ticks=None):
+def get_tick_data_optimised(start_date_str,end_date_str,pickle_file_name_ticks=None,currency_pair='EURUSD'):
     # fixes the error where the api crashes the kernel
     date_format = '%d %b %Y'
     pair_list = get_date_pairs(start_date_str,end_date_str,date_format)
     df_list = []
     for pair in pair_list:
         print(pair[0],pair[1])
-        df_list.append(get_tick_data(pair[0],pair[1]))
+        df_list.append(get_tick_data(pair[0],pair[1],currency_pair))
     df = pd.concat(df_list)
     if pickle_file_name_ticks is not None:
         df.to_pickle(pickle_file_name_ticks)
@@ -150,11 +150,11 @@ def year_order(start_date, end_date):
         return year_dict
     
 # extracts data from various files based on date range given and then returns it as a single dataframe
-def data_gather_from_files(start_date,end_date,file_path='Data for Practicum 2'): # change this to explore other currency****
+def data_gather_from_files(start_date,end_date,file_path='Data for Practicum 2',currency_pair='EURUSD'):
     year_dict = year_order(start_date,end_date)
     full_df = pd.DataFrame()
     for year in year_dict.keys():
-        year_df = pd.read_pickle(file_path + '/ticks_' + str(year) + '.pkl')
+        year_df = pd.read_pickle(f'{file_path}/{currency_pair}/ticks_' + str(year) + '.pkl')
         year_dict[year][0] = year_dict[year][0].tz_localize('UTC')
         year_dict[year][1] = year_dict[year][1].tz_localize('UTC')
         year_df = year_df.loc[year_dict[year][0]:year_dict[year][1]]
@@ -227,9 +227,9 @@ def plot_colored_ladder(ladderized_data):
         else:
             plt.plot(ladderized_data.index[i-1:i+1], ladderized_data.iloc[i-1:i+1], color='blue')  # Neutral color for no change
             
-def plot_ladderized(start_date, end_date, grid_size=0.0005, ladderize_function=ladderize_open):
+def plot_ladderized(start_date, end_date, grid_size=0.0005, ladderize_function=ladderize_open,currency_pair='EURUSD'):
     # Load the tick data
-    tick_data = get_tick_data(start_date,end_date)['EURUSD.mid']
+    tick_data = get_tick_data(start_date,end_date,currency_pair)['mid']
 
     ladderized_data = ladderize_function(tick_data, grid_size)
 
