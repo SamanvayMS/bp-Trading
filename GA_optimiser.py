@@ -58,9 +58,9 @@ def walk_forward_analysis(evaluation_start, evaluation_end, evaluation_day,param
     optimal_df = {}
     for dates in generated_date_ranges:
         train_period = get_previous_n_months(dates[0], lookback_in_months)
-        train_data = data_gather_from_files(train_period[0],train_period[1],currency_pair)['mid']
+        train_data = data_gather_from_files(train_period[0],train_period[1],currency_pair=currency_pair)['mid']
         print('Data gathered for training period: ',train_period[0],train_period[1])
-        test_data = data_gather_from_files(dates[0],dates[1])['mid']
+        test_data = data_gather_from_files(dates[0],dates[1],currency_pair=currency_pair)['mid']
         print('Data gathered for testing period: ',dates[0],dates[1])
         test_values,train_values,optimal_params = optimization_function(train_data,test_data,parameters,optimizer_params)
         print('Optimal parameters are: ',optimal_params)
@@ -703,7 +703,7 @@ def deap_optimiser_g_n_rollover(train_start,train_end,test_start,test_end,parame
         G, n = individual[0]*grid_params[2], individual[1]*position_params[2]
         profit = 0
         for pair in train_pairs:
-            train_data = data_gather_from_files(pair[0],pair[1],currency_pair)['mid']
+            train_data = data_gather_from_files(pair[0],pair[1],currency_pair=currency_pair)['mid']
             max_loss, R_PNL, month_profit, _ = run_strategy_optimised(train_data, G, n)
             constraints = [
                 max_loss < -500e3
@@ -778,13 +778,13 @@ def deap_optimiser_g_n_rollover(train_start,train_end,test_start,test_end,parame
     test_df = {}
     
     for pair in train_pairs:
-        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair)['mid']
+        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair=currency_pair)['mid']
         max_loss, R_PNL,profit, _ = run_strategy_optimised(tick_data, optimal_g,optimal_n)
         train_df[pair[0] +'-'+ pair[1]] = [max_loss, R_PNL,profit,optimal_g,optimal_n]
     print("optimisation completed")
     
     for pair in test_pairs:
-        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair)['mid']
+        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair=currency_pair)['mid']
         max_loss, R_PNL,profit, _ = run_strategy_optimised(tick_data, optimal_g,optimal_n)
         test_df[pair[0] +'-'+ pair[1]] = [max_loss, R_PNL,profit,optimal_g,optimal_n]
     
@@ -846,7 +846,7 @@ def deap_optimiser_multiplier_rollover(train_start,train_end,test_start,test_end
         G, n, multiplier, lookback = individual[0]*grid_params[2], individual[1]*position_params[2], individual[2]*multiplier_params[2], individual[3]
         profit = 0
         for pair in train_pairs:
-            train_data = data_gather_from_files(pair[0],pair[1],currency_pair)['mid']
+            train_data = data_gather_from_files(pair[0],pair[1],currency_pair=currency_pair)['mid']
             max_loss, R_PNL, month_profit, _ = run_strategy_optimised(train_data, G, n, multiplier = multiplier,lookback = lookback)
             constraints = [
                 max_loss < -500e3
@@ -919,13 +919,13 @@ def deap_optimiser_multiplier_rollover(train_start,train_end,test_start,test_end
     test_df = {}
     
     for pair in train_pairs:
-        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair)['mid']
+        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair=currency_pair)['mid']
         max_loss, R_PNL,profit, _ = run_strategy_optimised(tick_data, optimal_g,optimal_n,multiplier = optimal_m,lookback = optimal_l)
         train_df[pair[0] +'-'+ pair[1]] = [max_loss, R_PNL,profit,optimal_g,optimal_n,optimal_m,optimal_l]
     print("optimisation completed")
     
     for pair in test_pairs:
-        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair)['mid']
+        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair=currency_pair)['mid']
         max_loss, R_PNL,profit, _ = run_strategy_optimised(tick_data, optimal_g,optimal_n,multiplier = optimal_m,lookback = optimal_l)
         test_df[pair[0] +'-'+ pair[1]] = [max_loss, R_PNL,profit,optimal_g,optimal_n,optimal_m,optimal_l]
     
@@ -992,7 +992,7 @@ def deap_optimiser_indicator_rollover(train_start,train_end,test_start,test_end,
         G, n, indicator_type, lookback, scaling_factor = individual[0]*grid_params[2], individual[1]*position_params[2], individual[2], individual[3], individual[4]*scaling_factor_params[2]
         profit = 0
         for pair in train_pairs:
-            train_data = data_gather_from_files(pair[0],pair[1],currency_pair)['mid']
+            train_data = data_gather_from_files(pair[0],pair[1],currency_pair=currency_pair)['mid']
             max_loss, R_PNL, month_profit, _ = run_strategy_optimised(train_data, G, n,lookback = lookback,indicator_type = indicator_type,indicator_scale=scaling_factor)
             constraints = [
                 max_loss < -500e3
@@ -1066,13 +1066,13 @@ def deap_optimiser_indicator_rollover(train_start,train_end,test_start,test_end,
     test_df = {}
     
     for pair in train_pairs:
-        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair)['mid']
+        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair=currency_pair)['mid']
         max_loss, R_PNL,profit, _ = run_strategy_optimised(tick_data, optimal_g,optimal_n,lookback = optimal_l,indicator_type = optimal_i,indicator_scale=optimal_s)
         train_df[pair[0] +'-'+ pair[1]] = [max_loss, R_PNL,profit,optimal_g,optimal_n,optimal_i,optimal_l,optimal_s]
     print("optimisation completed")
     
     for pair in test_pairs:
-        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair)['mid']
+        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair=currency_pair)['mid']
         max_loss, R_PNL,profit, _ = run_strategy_optimised(tick_data, optimal_g,optimal_n,lookback = optimal_l,indicator_type = optimal_i,indicator_scale=optimal_s)
         test_df[pair[0] +'-'+ pair[1]] = [max_loss, R_PNL,profit,optimal_g,optimal_n,optimal_i,optimal_l,optimal_s]
     
@@ -1105,7 +1105,7 @@ def grid_search_optimiser_rollover(train_start,train_end,test_start,test_end,par
         for lot_size in lot_sizing_grid:
             combination_profit = 0
             for pair in train_pairs:
-                train_data = data_gather_from_files(pair[0],pair[1],currency_pair)['mid']
+                train_data = data_gather_from_files(pair[0],pair[1],currency_pair=currency_pair)['mid']
                 max_loss, R_PNL, profit,_ = run_strategy_optimised(train_data, ladder_size, lot_size)
                 if (max_loss > -500000):
                     combination_profit += profit
@@ -1119,13 +1119,13 @@ def grid_search_optimiser_rollover(train_start,train_end,test_start,test_end,par
     test_df = {}
     
     for pair in train_pairs:
-        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair)['mid']
+        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair=currency_pair)['mid']
         max_loss, R_PNL,profit, _ = run_strategy_optimised(tick_data, optimal_g,optimal_n)
         train_df[pair[0] +'-'+ pair[1]] = [max_loss, R_PNL,profit,optimal_g,optimal_n]
     print("optimisation completed")
     
     for pair in test_pairs:
-        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair)['mid']
+        tick_data = data_gather_from_files(pair[0],pair[1],currency_pair=currency_pair)['mid']
         max_loss, R_PNL,profit, _ = run_strategy_optimised(tick_data, optimal_g,optimal_n)
         test_df[pair[0] +'-'+ pair[1]] = [max_loss, R_PNL,profit,optimal_g,optimal_n]
     
