@@ -1150,14 +1150,14 @@ def Profit_Analysis(currency_pair='EURUSD',type ='profit',split='3-1'):
         plt.figure(figsize=(10,5))
         plt.hist(optimal_df[col],bins = min(20,len(optimal_df[col].unique())),align='mid',)
         plt.xticks(rotation=90)
-        plt.title(col)
+        plt.title(col + ' for ' + currency_pair + ' ' + type + ' ' + split)
         plt.show()
         
     for col in optimal_df.columns:
         plt.figure(figsize=(20,5))
         plt.plot(optimal_df[col])
         plt.xticks(rotation=90)
-        plt.title(col)
+        plt.title(col + ' for ' + currency_pair + ' ' + type + ' ' + split)
         plt.show()
 
     plt.figure(figsize=(20,5))
@@ -1166,6 +1166,7 @@ def Profit_Analysis(currency_pair='EURUSD',type ='profit',split='3-1'):
     for col in columns:
         plt.bar(train_df.index,train_df[col],alpha = 0.6,color = colour_set.pop())
     plt.xticks(rotation=90)
+    plt.title('Train ' + type + ' ' + split + ' ' + currency_pair)
     plt.legend(columns)
     plt.show()
     
@@ -1175,6 +1176,7 @@ def Profit_Analysis(currency_pair='EURUSD',type ='profit',split='3-1'):
     for col in columns:
         plt.bar(test_df.index,test_df[col],alpha = 0.6,color = colour_set.pop())
     plt.xticks(rotation=90)
+    plt.title('Test ' + type + ' ' + split + ' ' + currency_pair)
     plt.legend(columns)
     plt.show()
     
@@ -1197,7 +1199,7 @@ def Profit_Analysis(currency_pair='EURUSD',type ='profit',split='3-1'):
     plt.bar(yearly_df.index,yearly_df['profit'],alpha = 0.6,color = 'green')
     plt.bar(yearly_df.index,yearly_df['max_loss'],alpha = 0.6,color = 'red')
     plt.xlabel('Year')
-    plt.title('Yearly Profits')
+    plt.title('Yearly Profits for ' + currency_pair + ' ' + type + ' ' + split)
     plt.legend(['profits','max_loss'])
     plt.show()
     
