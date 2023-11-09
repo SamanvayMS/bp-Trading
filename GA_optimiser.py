@@ -1177,3 +1177,27 @@ def Profit_Analysis(currency_pair='EURUSD',type ='profit',split='3-1'):
     plt.xticks(rotation=90)
     plt.legend(columns)
     plt.show()
+    
+    plt.figure(figsize=(10,5))
+
+    def get_yearly(df,years):
+        yearly_df = {}
+        df = df.reset_index(drop=True)
+        for i in range(len(years)):
+            year = df.iloc[i*12:(i+1)*12]
+            profit = np.sum(year['profit'])
+            max_loss = min(np.min(np.cumsum(year['profit'])),np.min(year['max_loss']))
+            yearly_df[years[i]]=[profit,max_loss]
+        yearly_df = pd.DataFrame(yearly_df).T
+        yearly_df.columns = ['profit','max_loss']
+        return yearly_df
+    
+    years = ['2014','2015','2016','2017','2018','2019','2020','2021','2022']
+    yearly_df = get_yearly(test_df,years)
+    plt.bar(yearly_df.index,yearly_df['profit'],alpha = 0.6,color = 'green')
+    plt.bar(yearly_df.index,yearly_df['max_loss'],alpha = 0.6,color = 'red')
+    plt.xlabel('Year')
+    plt.title('Yearly Profits')
+    plt.legend(['profits','max_loss'])
+    plt.show()
+    
